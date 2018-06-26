@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f876f6e5-7942-4946-8bcd-aa9291a6b6e6" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GS16AO64C.config.win.jnaerator" beforeDir="false" afterPath="$PROJECT_DIR$/GS16AO64C.config.win.jnaerator" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/bindings/GS16AO64_eDriver_C_64Library.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/bindings/GS_DMA_DESCRIPTOR.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/bindings/GS_DMA_DESCRIPTOR.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/bindings/GS_NOTIFY_OBJECT.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/bindings/GS_NOTIFY_OBJECT.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/bindings/GS_PHYSICAL_MEM.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/bindings/GS_PHYSICAL_MEM.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/scripts/example.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/scripts/example.java" afterDir="false" />
-    </list>
+    <list default="true" id="f876f6e5-7942-4946-8bcd-aa9291a6b6e6" name="Default" comment="" />
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -95,6 +87,16 @@
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="scripts" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="GS16_64bit" type="b2602c69:ProjectViewProjectNode" />
+              <item name="GS16_64bit" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="win32-x86-64" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="GS16_64bit" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+            </path>
           </expand>
           <select />
         </subPane>
@@ -108,9 +110,9 @@
     <property name="Repository.Attach.JavaDocs" value="false" />
     <property name="Repository.Attach.Sources" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.15" />
-    <property name="project.structure.side.proportion" value="0.48505747" />
+    <property name="project.structure.side.proportion" value="0.1632184" />
   </component>
   <component name="RecentsManager">
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
@@ -205,6 +207,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1920" height="1200" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info anchor="right" id="Palette" order="3" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -214,7 +217,7 @@
       <window_info anchor="right" id="Capture Analysis" order="3" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
       <window_info anchor="right" id="Maven Projects" order="3" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.32940108" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.32940108" />
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Terminal" order="7" weight="0.32940108" />
       <window_info id="Capture Tool" order="2" />
@@ -403,7 +406,7 @@
           <splitter-proportions>
             <option name="proportions">
               <list>
-                <option value="0.48505747" />
+                <option value="0.1632184" />
               </list>
             </option>
           </splitter-proportions>
