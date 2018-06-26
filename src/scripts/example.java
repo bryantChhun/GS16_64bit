@@ -1,9 +1,8 @@
-package com.company;
+package scripts;
 
-//import com.company.GS16AO64_eDriver_CLibrary;
-import com.company.GS16AO64_eDriver_C_64Library;
-//import com.company.GS16AO64_eDriver_CLibrary.U32;
-import com.company.GS16AO64_eDriver_C_64Library.U32;
+import bindings.GS16AO64_eDriver_C_64Library;
+import bindings.GS16AO64_eDriver_C_64Library.U32;
+import bindings.GS16AO64_eDriver_C_64Library.U64;
 import com.sun.jna.Native;
 import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
