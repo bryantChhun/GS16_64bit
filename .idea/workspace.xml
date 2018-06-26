@@ -2,13 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f876f6e5-7942-4946-8bcd-aa9291a6b6e6" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/net_java_dev_jna_jna_4_5_1.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GS16AO64C.config.win.jnaerator" beforeDir="false" afterPath="$PROJECT_DIR$/GS16AO64C.config.win.jnaerator" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GS16_testapp_64bit.iml" beforeDir="false" afterPath="$PROJECT_DIR$/GS16_testapp_64bit.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jnaerate.sh" beforeDir="false" afterPath="$PROJECT_DIR$/jnaerate.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/example.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/example.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/bindings/GS16AO64_eDriver_C_64Library.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/bindings/GS_DMA_DESCRIPTOR.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/bindings/GS_DMA_DESCRIPTOR.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/bindings/GS_NOTIFY_OBJECT.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/bindings/GS_NOTIFY_OBJECT.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/bindings/GS_PHYSICAL_MEM.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/bindings/GS_PHYSICAL_MEM.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/scripts/example.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/scripts/example.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -19,29 +19,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="main.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="195">
-              <caret line="13" column="42" lean-forward="true" selection-start-line="13" selection-start-column="42" selection-end-line="13" selection-end-column="42" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="example.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/example.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <caret lean-forward="true" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -63,12 +41,14 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/GS16AO64C.config.win.jnaerator" />
         <option value="$PROJECT_DIR$/src/main.java" />
+        <option value="$PROJECT_DIR$/src/example.java" />
+        <option value="$PROJECT_DIR$/src/scripts/main.java" />
+        <option value="$PROJECT_DIR$/GS16AO64C.config.win.jnaerator" />
         <option value="$PROJECT_DIR$/src/bindings/GS_DMA_DESCRIPTOR.java" />
         <option value="$PROJECT_DIR$/src/bindings/GS_NOTIFY_OBJECT.java" />
         <option value="$PROJECT_DIR$/src/bindings/GS_PHYSICAL_MEM.java" />
-        <option value="$PROJECT_DIR$/src/example.java" />
+        <option value="$PROJECT_DIR$/src/scripts/example.java" />
       </list>
     </option>
   </component>
@@ -95,23 +75,6 @@
             <path>
               <item name="GS16_64bit" type="b2602c69:ProjectViewProjectNode" />
               <item name="GS16_64bit" type="462c0819:PsiDirectoryNode" />
-              <item name="DriverFiles" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="GS16_64bit" type="b2602c69:ProjectViewProjectNode" />
-              <item name="GS16_64bit" type="462c0819:PsiDirectoryNode" />
-              <item name="DriverFiles" type="462c0819:PsiDirectoryNode" />
-              <item name="66-16AO64" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="GS16_64bit" type="b2602c69:ProjectViewProjectNode" />
-              <item name="GS16_64bit" type="462c0819:PsiDirectoryNode" />
-              <item name="DriverFiles" type="462c0819:PsiDirectoryNode" />
-              <item name="66-16AO64_64bit" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="GS16_64bit" type="b2602c69:ProjectViewProjectNode" />
-              <item name="GS16_64bit" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -130,7 +93,7 @@
               <item name="GS16_64bit" type="b2602c69:ProjectViewProjectNode" />
               <item name="GS16_64bit" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main.java" type="529ef68f:ClassesTreeStructureProvider$PsiClassOwnerTreeNode" />
+              <item name="scripts" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -148,6 +111,13 @@
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.48505747" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="scripts" />
+      <recent name="main" />
+      <recent name="main.java" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -235,21 +205,22 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1920" height="1200" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info anchor="right" id="Palette" order="3" />
       <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Messages" />
       <window_info anchor="right" id="Palette&#9;" order="3" />
       <window_info id="Image Layers" order="2" />
       <window_info anchor="right" id="Capture Analysis" order="3" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
       <window_info anchor="right" id="Maven Projects" order="3" />
-      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.32940108" />
       <window_info anchor="bottom" id="Version Control" order="7" />
-      <window_info anchor="bottom" id="Terminal" order="7" visible="true" weight="0.32940108" />
+      <window_info anchor="bottom" id="Terminal" order="7" weight="0.32940108" />
       <window_info id="Capture Tool" order="2" />
       <window_info id="Designer" order="2" />
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25239617" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32940108" />
       <window_info id="Learn" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -260,7 +231,6 @@
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
-      <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Message" order="0" />
     </layout>
@@ -283,13 +253,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/GS16AO64C.config.win.jnaerator">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" column="17" lean-forward="true" selection-start-line="5" selection-start-column="17" selection-end-line="5" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="30">
@@ -297,9 +260,36 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/GS16AO64C.config.win.jnaerator">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="14" column="1" lean-forward="true" selection-start-line="14" selection-start-column="1" selection-end-line="14" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/bindings/GS_NOTIFY_OBJECT.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="288">
+          <caret line="25" column="39" selection-start-line="25" selection-start-column="39" selection-end-line="25" selection-end-column="39" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/bindings/GS_PHYSICAL_MEM.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="645">
+          <caret line="47" column="41" lean-forward="true" selection-start-line="47" selection-start-column="41" selection-end-line="47" selection-end-column="41" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/bindings/GS16AO64_eDriver_C_64Library.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3374">
+        <state relative-caret-position="3390">
           <caret line="234" column="6" lean-forward="true" selection-start-line="234" selection-start-column="6" selection-end-line="234" selection-end-column="6" />
           <folding>
             <element signature="imports" expanded="true" />
@@ -309,45 +299,35 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/bindings/GS_DMA_DESCRIPTOR.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1125">
-          <caret line="77" column="57" selection-start-line="77" selection-start-column="57" selection-end-line="77" selection-end-column="57" />
+        <state relative-caret-position="855">
+          <caret line="57" column="45" lean-forward="true" selection-start-line="57" selection-start-column="45" selection-end-line="57" selection-end-column="45" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/bindings/GS_NOTIFY_OBJECT.java">
+    <entry file="file://$PROJECT_DIR$/src/scripts/example.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="330">
+          <caret line="22" lean-forward="true" selection-start-line="22" selection-end-line="22" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/scripts/Main.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="300">
-          <caret line="20" column="56" lean-forward="true" selection-start-line="20" selection-start-column="56" selection-end-line="20" selection-end-column="56" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+          <caret line="20" column="37" lean-forward="true" selection-start-line="20" selection-start-column="37" selection-end-line="20" selection-end-column="37" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/bindings/GS_PHYSICAL_MEM.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="347">
-          <caret line="48" column="19" lean-forward="true" selection-start-line="48" selection-start-column="19" selection-end-line="48" selection-end-column="19" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main.java">
+    <entry file="file://$PROJECT_DIR$/src/bindings/AO64_64b_Driver_CLibrary.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="195">
-          <caret line="13" column="42" lean-forward="true" selection-start-line="13" selection-start-column="42" selection-end-line="13" selection-end-column="42" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/example.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret lean-forward="true" />
+          <caret line="13" column="17" selection-start-line="13" selection-start-column="17" selection-end-line="13" selection-end-column="17" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

@@ -1,4 +1,4 @@
--library GS16AO64_eDriver_C_64
+-library AO64_64b_Driver_C
 #-beautifyNames
 -f
 -o src/

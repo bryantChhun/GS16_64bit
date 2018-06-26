@@ -1,9 +1,7 @@
 package scripts;
 
-import bindings.GS16AO64_eDriver_C_64Library;
-import bindings.GS16AO64_eDriver_C_64Library.U32;
-import bindings.GS16AO64_eDriver_C_64Library.U64;
-import com.sun.jna.Native;
+import bindings.AO64_64b_Driver_CLibrary;
+import bindings.AO64_64b_Driver_CLibrary.U32;
 import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
 import java.nio.ByteBuffer;
@@ -12,7 +10,7 @@ import com.sun.jna.ptr.IntByReference;
 
 public class example {
 
-    private static GS16AO64_eDriver_C_64Library INSTANCE; // = GS16AO64CLibrary.INSTANCE;
+    private static AO64_64b_Driver_CLibrary INSTANCE; // = GS16AO64CLibrary.INSTANCE;
     private U32  ulBdNum, ulNumBds, ulAuxBdNum, ulError;
     private IntByReference BdNum;
     private ByteBuffer pDeviceInfo;
@@ -46,7 +44,7 @@ public class example {
             System.out.print("exception loading library = "+ex);
         }*/
 
-        INSTANCE = GS16AO64_eDriver_C_64Library.INSTANCE;
+        INSTANCE = AO64_64b_Driver_CLibrary.INSTANCE;
 
         // hard set board num to 1 (int16)
         //Pointer BdNum = new Memory(4);

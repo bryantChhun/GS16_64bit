@@ -1,6 +1,6 @@
 package bindings;
-import bindings.GS16AO64_eDriver_C_64Library.U32;
-import bindings.GS16AO64_eDriver_C_64Library.U64;
+import bindings.AO64_64b_Driver_CLibrary.U32;
+import bindings.AO64_64b_Driver_CLibrary.U64;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import java.util.Arrays;
