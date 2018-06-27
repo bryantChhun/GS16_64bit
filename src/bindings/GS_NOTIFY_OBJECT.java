@@ -1,6 +1,6 @@
 package bindings;
-import bindings.AO64_64b_Driver_CLibrary.U32;
 import bindings.AO64_64b_Driver_CLibrary.U64;
+import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import java.util.Arrays;
@@ -16,7 +16,7 @@ public class GS_NOTIFY_OBJECT extends Structure {
 	 * Magic number to determine validity<br>
 	 * C type : U32
 	 */
-	public U32 IsValidTag;
+	public NativeLong IsValidTag;
 	/**
 	 * -- INTERNAL -- Wait object used by the driver<br>
 	 * C type : U64
@@ -41,7 +41,7 @@ public class GS_NOTIFY_OBJECT extends Structure {
 	 * @param hEvent User event handle (HANDLE can be 32 or 64 bit)<br>
 	 * C type : U64
 	 */
-	public GS_NOTIFY_OBJECT(U32 IsValidTag, U64 pWaitObject, U64 hEvent) {
+	public GS_NOTIFY_OBJECT(NativeLong IsValidTag, U64 pWaitObject, U64 hEvent) {
 		super();
 		this.IsValidTag = IsValidTag;
 		this.pWaitObject = pWaitObject;

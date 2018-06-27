@@ -1,6 +1,6 @@
 package bindings;
-import bindings.AO64_64b_Driver_CLibrary.U32;
 import bindings.AO64_64b_Driver_CLibrary.U64;
+import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import java.util.Arrays;
@@ -16,22 +16,22 @@ public abstract class GS_DMA_DESCRIPTOR extends Structure {
 	 * BYTES to transfer (U32 = 4 Bytes)<br>
 	 * C type : U32
 	 */
-	public U32 BytesDesc_1;
+	public NativeLong BytesDesc_1;
 	/**
 	 * Max transfer size is 23 bits<br>
 	 * C type : U32
 	 */
-	public U32 BytesDesc_2;
+	public NativeLong BytesDesc_2;
 	/**
 	 * such that max U32 transfer size<br>
 	 * C type : U32
 	 */
-	public U32 BytesDesc_3;
+	public NativeLong BytesDesc_3;
 	/**
 	 * is (2097151) 0x1FFFFF<br>
 	 * C type : U32
 	 */
-	public U32 BytesDesc_4;
+	public NativeLong BytesDesc_4;
 	/**
 	 * Valid PHYSICAL address for contiguous<br>
 	 * C type : U64
@@ -89,7 +89,7 @@ public abstract class GS_DMA_DESCRIPTOR extends Structure {
 	 * C type : U64<br>
 	 * @param Rsvrd C type : U64
 	 */
-	public GS_DMA_DESCRIPTOR(U32 BytesDesc_1, U32 BytesDesc_2, U32 BytesDesc_3, U32 BytesDesc_4, U64 PhyAddrDesc_1, U64 PhyAddrDesc_2, U64 PhyAddrDesc_3, U64 PhyAddrDesc_4, U64 Rsvrd) {
+	public GS_DMA_DESCRIPTOR(NativeLong BytesDesc_1, NativeLong BytesDesc_2, NativeLong BytesDesc_3, NativeLong BytesDesc_4, U64 PhyAddrDesc_1, U64 PhyAddrDesc_2, U64 PhyAddrDesc_3, U64 PhyAddrDesc_4, U64 Rsvrd) {
 		super();
 		this.BytesDesc_1 = BytesDesc_1;
 		this.BytesDesc_2 = BytesDesc_2;

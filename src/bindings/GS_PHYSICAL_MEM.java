@@ -1,6 +1,6 @@
 package bindings;
-import bindings.AO64_64b_Driver_CLibrary.U32;
 import bindings.AO64_64b_Driver_CLibrary.U64;
+import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import java.util.Arrays;
@@ -31,7 +31,7 @@ public class GS_PHYSICAL_MEM extends Structure {
 	 * Size of the buffer<br>
 	 * C type : U32
 	 */
-	public U32 Size;
+	public NativeLong Size;
 	public GS_PHYSICAL_MEM() {
 		super();
 	}
@@ -48,7 +48,7 @@ public class GS_PHYSICAL_MEM extends Structure {
 	 * @param Size Size of the buffer<br>
 	 * C type : U32
 	 */
-	public GS_PHYSICAL_MEM(U64 UserAddr, U64 PhysicalAddr, U64 CpuPhysical, U32 Size) {
+	public GS_PHYSICAL_MEM(U64 UserAddr, U64 PhysicalAddr, U64 CpuPhysical, NativeLong Size) {
 		super();
 		this.UserAddr = UserAddr;
 		this.PhysicalAddr = PhysicalAddr;
