@@ -35,7 +35,7 @@ public class GS_PHYSICAL_MEM extends Structure {
 	public GS_PHYSICAL_MEM() {
 		super();
 	}
-	protected List<? > getFieldOrder() {
+	protected List<String> getFieldOrder() {
 		return Arrays.asList("UserAddr", "PhysicalAddr", "CpuPhysical", "Size");
 	}
 	/**

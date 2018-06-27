@@ -67,7 +67,7 @@ public abstract class GS_DMA_DESCRIPTOR extends Structure {
 	public GS_DMA_DESCRIPTOR() {
 		super();
 	}
-	protected List<? > getFieldOrder() {
+	protected List<String> getFieldOrder() {
 		return Arrays.asList("BytesDesc_1", "BytesDesc_2", "BytesDesc_3", "BytesDesc_4", "PhyAddrDesc_1", "PhyAddrDesc_2", "PhyAddrDesc_3", "PhyAddrDesc_4", "Rsvrd");
 	}
 	/**
