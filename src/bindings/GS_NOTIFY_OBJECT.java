@@ -30,7 +30,7 @@ public class GS_NOTIFY_OBJECT extends Structure {
 	public GS_NOTIFY_OBJECT() {
 		super();
 	}
-	protected List<String> getFieldOrder() {
+	protected List<? > getFieldOrder() {
 		return Arrays.asList("IsValidTag", "pWaitObject", "hEvent");
 	}
 	/**
