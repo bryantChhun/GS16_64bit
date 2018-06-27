@@ -1,5 +1,7 @@
 package scripts;
 
+import bindings.AO64_64b_Driver_CLibrary.U32;
+
 public class Main {
 
     /**
@@ -25,7 +27,11 @@ public class Main {
 
     public static void main(String[] args) {
         example ex = new example();
+        //ex.load_boards();
         ex.AO64_Init_Test();
+        //U32 handle_ = ex.get_handle();
+        //System.out.println("handle = "+handle_);
+        System.out.print("done with main");
     }
 
 }

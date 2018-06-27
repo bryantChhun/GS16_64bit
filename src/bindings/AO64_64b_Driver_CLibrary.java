@@ -217,6 +217,7 @@ public interface AO64_64b_Driver_CLibrary extends Library {
 	 * <i>native declaration : DriverFiles/66-16AO64/AO64eintface.h:272</i>
 	 */
 	void AO64_66_Free_Physical_Memory(AO64_64b_Driver_CLibrary.U32 BoardNumber, GS_PHYSICAL_MEM memPtr, AO64_64b_Driver_CLibrary.U32 ulError);
+
 	public static class U64 extends PointerType {
 		public U64(Pointer address) {
 			super(address);
