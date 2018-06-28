@@ -1,6 +1,7 @@
 package scripts;
 
-import bindings.AO64_64b_Driver_CLibrary.U32;
+import com.sun.jna.NativeLong;
+
 
 public class Main {
 
@@ -27,10 +28,29 @@ public class Main {
 
     public static void main(String[] args) {
         example ex = new example();
-        //ex.load_boards();
+        //NativeLong out = ex.find_boards();
         ex.AO64_Init_Test();
-        //U32 handle_ = ex.get_handle();
-        //System.out.println("handle = "+handle_);
+        //NativeLong out = ex.auto_cal();
+        //System.out.println("findboards output = "+out.toString());
+        //System.out.println(ex.get_handle());
+
+       // NativeLong out = ex.find_boards();
+       // System.out.println(out.toString());
+
+//        System.out.println("testing bytes and int");
+//        int a = 0;
+//        byte a_ = (byte)a;
+//        int c = 0xAA;
+//        byte[] d = new byte[] {0x14};
+//        int d_ = (int)0x14;
+//
+//        System.out.println(a);
+//        System.out.println(a_);
+//        System.out.println(c);
+//        System.out.println("c to hex = "+Integer.toHexString(c));
+//        System.out.println(d);
+//        System.out.println(d_);
+
         System.out.print("done with main");
     }
 

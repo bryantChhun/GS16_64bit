@@ -306,6 +306,7 @@ public interface AO64_64b_Driver_CLibrary extends Library {
 	 * <i>native declaration : DriverFiles/66-16AO64/AO64eintface.h:126</i>
 	 */
 	NativeLong AO64_66_Read_Local32(NativeLong BoardNumber, NativeLongByReference ulError, NativeLong ulRegister);
+	//NativeLong AO64_66_Read_Local32(NativeLong BoardNumber, NativeLongByReference ulError, int ulRegister);
 	/**
 	 * ==============================================================================<br>
 	 * Original signature : <code>void AO64_66_Write_Local32(U32, U32*, U32, U32)</code><br>
