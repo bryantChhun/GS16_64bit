@@ -50,6 +50,7 @@ public class Main {
 //        System.out.println("c to hex = "+Integer.toHexString(c));
 //        System.out.println(d);
 //        System.out.println(d_);
+        ex.close_handle();
 
         System.out.print("done with main");
     }

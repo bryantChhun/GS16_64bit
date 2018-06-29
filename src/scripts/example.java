@@ -30,58 +30,34 @@ public class example {
      */
     public example() {
         INSTANCE = AO64_64b_Driver_CLibrary.INSTANCE;
+
+        // MUST call FindBoards first
+        find_boards();
+
+        // hard set board = 1
         ulBdNum = new NativeLong();
         ulBdNum.setValue(1);
+
+        // create Error pointer
         ulError = new NativeLongByReference();
 
-        if(ulError.getValue() != null){
-            System.out.println("ulError occurred in construction = "+ulError.getValue().toString());
-        }
+        // MUST call Get_Handle second
+        get_handle();
+
     }
 
     public void AO64_Init_Test()
     {
 
-        System.out.println("is our library instance valid?  Try some calls");
-        System.out.println(INSTANCE.BCR);
-        System.out.println(INSTANCE.Reserved);
-        System.out.println(INSTANCE.Reserved1);
-        System.out.println(INSTANCE.BUFFER_OPS);
-        try
-        {
-            TimeUnit.SECONDS.sleep(1);
-        } catch(Exception ex) {
-            System.out.println("no timeout delay");
-        }
-
         System.out.println("Checking board Initialization Defaults");
 
-        //ulBdNum = new NativeLong();
-        //ulBdNum.setValue(1);
-        //ulError = new NativeLongByReference();
-        ulBdNum.setValue(0x01);
         NativeLong BCR = new NativeLong();
         BCR.setValue(0x00);
         NativeLong RATE_A = new NativeLong();
         RATE_A.setValue(0x24);
 
-        System.out.println("try to initialize with ulBdNum, ulError");
-        System.out.println("checking bdnum "+ulBdNum);
-        System.out.println("checking Error "+ulError);
-        System.out.println("checking bcr hex "+BCR.toString());
-        System.out.println("checking RATE_A hex "+RATE_A.toString());
 
-        try
-        {
-            TimeUnit.SECONDS.sleep(1);
-        } catch(Exception ex) {
-            System.out.println("no timeout delay");
-        }
-
-        if(ulError.getValue() != null){
-            System.out.println("ulError before Initialization = "+ulError.getValue().toString());
-        }
-
+        // Reset board to defaults
         INSTANCE.AO64_66_Initialize(ulBdNum, ulError);
 
         if(ulError.getValue() != null){
@@ -89,15 +65,16 @@ public class example {
         }
         //INSTANCE.AO64_66_Autocal(ulBdNum, ulErrorIn);
 
-//        System.out.println(INSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, INSTANCE.BCR ).toString());
-//        System.out.println(INSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, INSTANCE.BUFFER_SIZE ).toString());
+        //System.out.println(INSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, BCR ).toString());
+        System.out.println(INSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, INSTANCE.BUFFER_SIZE ).toString());
 //        System.out.println(INSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, INSTANCE.BUFFER_THRSHLD ).toString());
-//        System.out.println(INSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, INSTANCE.RATE_A ).toString());
+        //System.out.println(INSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, RATE_A ).toString());
+        System.out.println(INSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, INSTANCE.RATE_A ).toString());
 //        System.out.println(INSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, INSTANCE.RATE_B ).toString());
 
         //NativeLong a = INSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, INSTANCE.BCR );
 
-        NativeLong a = INSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, RATE_A );
+        //NativeLong a = INSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, RATE_A );
 
 //        try{
 //            a.wait(20);
@@ -136,15 +113,18 @@ public class example {
 
     public NativeLong get_handle()
     {
-        return INSTANCE.AO64_66_Get_Handle(ulError, ulBdNum);
+        NativeLong out = new NativeLong();
+        out = INSTANCE.AO64_66_Get_Handle(ulError, ulBdNum);
+        check_error("get_handle");
+        return out;
     }
 
-    public NativeLong auto_cal()
+    public void close_handle()
     {
-        GS_NOTIFY_OBJECT Event;
-        System.out.println(ulBdNum.longValue());
-        return INSTANCE.AO64_66_Autocal(ulBdNum, ulError);
+        INSTANCE.AO64_66_Close_Handle(ulBdNum, ulError);
+        check_error("close_handle");
     }
+
 
     public NativeLong find_boards()
     {
@@ -161,8 +141,23 @@ public class example {
             DeviceInfo.get(bytes);
         }
         String buf = new String(bytes, Charset.forName("UTF-8"));
-        System.out.println("device info from Find Boards = "+ buf);
+        System.out.println("device info from FindBoards = "+ buf);
         return out;
+    }
+
+    public NativeLong auto_cal()
+    {
+        GS_NOTIFY_OBJECT Event;
+        System.out.println(ulBdNum.longValue());
+        return INSTANCE.AO64_66_Autocal(ulBdNum, ulError);
+    }
+
+    public void check_error(String location)
+    {
+        if(ulError.getValue() != null)
+        {
+            System.out.println("ulError when calling %s = %s".format(location, ulError.getValue().toString()));
+        }
     }
 
 }
