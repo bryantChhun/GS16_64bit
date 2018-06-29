@@ -13,6 +13,7 @@ public class Main {
      * 4) print ('no aux board')
      * == Below are the tests ==
      * == will not require user input ==
+     *
      * 5) BOARD INIT TEST
      * 6) AUTOCALIB and read back firmware
      * 7) Output channels basic
@@ -28,28 +29,14 @@ public class Main {
 
     public static void main(String[] args) {
         example ex = new example();
-        //NativeLong out = ex.find_boards();
+
         ex.AO64_Init_Test();
-        //NativeLong out = ex.auto_cal();
-        //System.out.println("findboards output = "+out.toString());
-        //System.out.println(ex.get_handle());
 
-       // NativeLong out = ex.find_boards();
-       // System.out.println(out.toString());
+//        if(ex.auto_calibration().intValue() != 1)
+//        {
+//            System.out.println("Autocal failed");
+//        }
 
-//        System.out.println("testing bytes and int");
-//        int a = 0;
-//        byte a_ = (byte)a;
-//        int c = 0xAA;
-//        byte[] d = new byte[] {0x14};
-//        int d_ = (int)0x14;
-//
-//        System.out.println(a);
-//        System.out.println(a_);
-//        System.out.println(c);
-//        System.out.println("c to hex = "+Integer.toHexString(c));
-//        System.out.println(d);
-//        System.out.println(d_);
         ex.close_handle();
 
         System.out.print("done with main");

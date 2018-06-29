@@ -22,11 +22,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="AO64_64b_Driver_CLibrary.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="AO64_64b_Driver_CLibrary.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/bindings/AO64_64b_Driver_CLibrary.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="272">
-              <caret line="310" column="89" lean-forward="true" selection-start-line="310" selection-start-column="89" selection-end-line="310" selection-end-column="89" />
+            <state relative-caret-position="374">
+              <caret line="316" column="7" lean-forward="true" selection-start-line="316" selection-start-column="7" selection-end-line="316" selection-end-column="7" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#22818#22819#0" expanded="true" />
@@ -36,11 +36,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="example.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="example.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/scripts/example.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="458">
-              <caret line="71" column="105" lean-forward="true" selection-start-line="71" selection-start-column="105" selection-end-line="71" selection-end-column="105" />
+            <state relative-caret-position="349">
+              <caret line="143" column="49" lean-forward="true" selection-start-line="143" selection-start-column="49" selection-end-line="143" selection-end-column="49" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -51,8 +51,8 @@
       <file leaf-file-name="Main.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/scripts/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="179">
-              <caret line="17" column="31" lean-forward="true" selection-start-line="17" selection-start-column="31" selection-end-line="17" selection-end-column="31" />
+            <state relative-caret-position="306">
+              <caret line="30" column="35" lean-forward="true" selection-start-line="30" selection-start-column="35" selection-end-line="30" selection-end-column="35" />
             </state>
           </provider>
         </entry>
@@ -87,6 +87,7 @@
       <find>Reserved</find>
       <find>Get_handle</find>
       <find>BCR</find>
+      <find>Read_BCR</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -111,9 +112,9 @@
         <option value="$PROJECT_DIR$/src/bindings/GS_DMA_DESCRIPTOR.java" />
         <option value="$PROJECT_DIR$/src/bindings/GS_NOTIFY_OBJECT.java" />
         <option value="$PROJECT_DIR$/src/bindings/GS_PHYSICAL_MEM.java" />
+        <option value="$PROJECT_DIR$/src/bindings/AO64_64b_Driver_CLibrary.java" />
         <option value="$PROJECT_DIR$/src/scripts/Main.java" />
         <option value="$PROJECT_DIR$/src/scripts/example.java" />
-        <option value="$PROJECT_DIR$/src/bindings/AO64_64b_Driver_CLibrary.java" />
       </list>
     </option>
   </component>
@@ -152,12 +153,6 @@
               <item name="GS16_64bit" type="b2602c69:ProjectViewProjectNode" />
               <item name="GS16_64bit" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="GS16_64bit" type="b2602c69:ProjectViewProjectNode" />
-              <item name="GS16_64bit" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="bindings" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="GS16_64bit" type="b2602c69:ProjectViewProjectNode" />
@@ -306,11 +301,18 @@
       <option name="project" value="LOCAL" />
       <updated>1530219955117</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="More functional methods">
+      <created>1530251135422</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1530251135422</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1696" height="1026" extended-state="6" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info anchor="right" id="Palette" order="3" />
@@ -321,7 +323,7 @@
       <window_info anchor="right" id="Capture Analysis" order="3" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
       <window_info anchor="right" id="Maven Projects" order="3" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.3398844" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.29832402" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.25474524" />
       <window_info anchor="bottom" id="Terminal" order="7" weight="0.27486032" />
       <window_info id="Capture Tool" order="2" />
@@ -405,7 +407,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Test script modification" />
     <MESSAGE value="Find Boards is functional" />
-    <option name="LAST_COMMIT_MESSAGE" value="Find Boards is functional" />
+    <MESSAGE value="More functional methods" />
+    <option name="LAST_COMMIT_MESSAGE" value="More functional methods" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -417,7 +420,7 @@
           <option name="timeStamp" value="3" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="6" />
+      <option name="time" value="7" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
@@ -682,31 +685,31 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/bindings/AO64_64b_Driver_CLibrary.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="374">
+          <caret line="316" column="7" lean-forward="true" selection-start-line="316" selection-start-column="7" selection-end-line="316" selection-end-column="7" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#22818#22819#0" expanded="true" />
+            <element signature="e#22841#22842#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/scripts/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="179">
-          <caret line="17" column="31" lean-forward="true" selection-start-line="17" selection-start-column="31" selection-end-line="17" selection-end-column="31" />
+        <state relative-caret-position="306">
+          <caret line="30" column="35" lean-forward="true" selection-start-line="30" selection-start-column="35" selection-end-line="30" selection-end-column="35" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/scripts/example.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="458">
-          <caret line="71" column="105" lean-forward="true" selection-start-line="71" selection-start-column="105" selection-end-line="71" selection-end-column="105" />
+        <state relative-caret-position="349">
+          <caret line="143" column="49" lean-forward="true" selection-start-line="143" selection-start-column="49" selection-end-line="143" selection-end-column="49" />
           <folding>
             <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/bindings/AO64_64b_Driver_CLibrary.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="310" column="89" lean-forward="true" selection-start-line="310" selection-start-column="89" selection-end-line="310" selection-end-column="89" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#22818#22819#0" expanded="true" />
-            <element signature="e#22841#22842#0" expanded="true" />
           </folding>
         </state>
       </provider>

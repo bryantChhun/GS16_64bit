@@ -1,32 +1,24 @@
 package scripts;
 
 import bindings.AO64_64b_Driver_CLibrary;
-import bindings.GS_NOTIFY_OBJECT;
 import com.sun.jna.*;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
-import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.LongByReference;
-import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.NativeLong;
 import com.sun.jna.ptr.NativeLongByReference;
-import com.sun.jna.ptr.ByteByReference;
-
-
-import java.util.concurrent.TimeUnit;
-
 
 public class example {
 
-    public static AO64_64b_Driver_CLibrary INSTANCE;
-    public NativeLong ulBdNum; //, BCR;
-    public NativeLongByReference ulError;
+    private static AO64_64b_Driver_CLibrary INSTANCE;
+    private NativeLong ulNumBds, ulBdNum, numChan, id_off, eog, eof;
+    private NativeLong BCR, Reserved, Reserved1, BUFFER_OPS, FW_REV, AUTO_CAL, OUTPUT_DATA_BUFFER, BUFFER_SIZE, BUFFER_THRSHLD, RATE_A, RATE_B;
+    private NativeLongByReference ulError;
 
     /**
      * constructor creates instance of the JNA library
-     *
+     *  Also initializes the board.
      */
     public example() {
         INSTANCE = AO64_64b_Driver_CLibrary.INSTANCE;
@@ -46,71 +38,6 @@ public class example {
 
     }
 
-    public void AO64_Init_Test()
-    {
-
-        System.out.println("Checking board Initialization Defaults");
-
-        NativeLong BCR = new NativeLong();
-        BCR.setValue(0x00);
-        NativeLong RATE_A = new NativeLong();
-        RATE_A.setValue(0x24);
-
-
-        // Reset board to defaults
-        INSTANCE.AO64_66_Initialize(ulBdNum, ulError);
-
-        if(ulError.getValue() != null){
-            System.out.println("ulError after Initialization = "+ulError.getValue().toString());
-        }
-        //INSTANCE.AO64_66_Autocal(ulBdNum, ulErrorIn);
-
-        //System.out.println(INSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, BCR ).toString());
-        System.out.println(INSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, INSTANCE.BUFFER_SIZE ).toString());
-//        System.out.println(INSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, INSTANCE.BUFFER_THRSHLD ).toString());
-        //System.out.println(INSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, RATE_A ).toString());
-        System.out.println(INSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, INSTANCE.RATE_A ).toString());
-//        System.out.println(INSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, INSTANCE.RATE_B ).toString());
-
-        //NativeLong a = INSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, INSTANCE.BCR );
-
-        //NativeLong a = INSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, RATE_A );
-
-//        try{
-//            a.wait(20);
-//        } catch (Exception ex){
-//            System.out.println("exception = "+ex);
-//        }
-//        NativeLong b = INSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, INSTANCE.BUFFER_SIZE);
-//        NativeLong c = INSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, INSTANCE.BUFFER_THRSHLD );
-//        NativeLong d = INSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, INSTANCE.RATE_A );
-//        NativeLong e = INSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, INSTANCE.RATE_B );
-
-//        System.out.println(a.longValue());
-//        System.out.println(a.byteValue());
-//        System.out.println(a.shortValue());
-//        System.out.println(a.hashCode());
-//        System.out.println(a.intValue());
-
-        //System.out.println(INSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, INSTANCE.RATE_A).toString());
-//        byte[] BCR = new byte[] {0x00};
-//        NativeLong bcr_read = INSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, BCR);
-//
-//        System.out.println(INSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, BCR).toString());
-//
-//        byte[] RATE_A = new byte[] {0x24};
-//        System.out.println(INSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, RATE_A).toString());
-
-
-        //System.out.println(String.format("BCR Reads:........(0x481X) : %04d", INSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, INSTANCE.BCR)));
-        //System.out.println(String.format("SMPL_Rate Reads:..(0x00C0) : %04d", INSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, RATE_A_U32)));
-        //System.out.println(String.format("BUFF_OP Reads:....(0x1400) : %04d", INSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, BUFFER_OPS_U32)));
-        //System.out.println(String.format("FIRM_REV Reads:...(      ) : %04d", INSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, FW_REV_U32)));
-        //m.dump();
-        //k.dump();
-        //err2.dump();
-    }
-
     public NativeLong get_handle()
     {
         NativeLong out = new NativeLong();
@@ -124,7 +51,6 @@ public class example {
         INSTANCE.AO64_66_Close_Handle(ulBdNum, ulError);
         check_error("close_handle");
     }
-
 
     public NativeLong find_boards()
     {
@@ -145,19 +71,81 @@ public class example {
         return out;
     }
 
-    public NativeLong auto_cal()
+    // needs fixing.  Always outputs result even if ulError is null?
+    public String check_error(String location)
     {
-        GS_NOTIFY_OBJECT Event;
-        System.out.println(ulBdNum.longValue());
-        return INSTANCE.AO64_66_Autocal(ulBdNum, ulError);
-    }
-
-    public void check_error(String location)
-    {
+        if(ulError.equals(null))
+        {
+            return null;
+        }
         if(ulError.getValue() != null)
         {
-            System.out.println("ulError when calling %s = %s".format(location, ulError.getValue().toString()));
+            return "ulError when calling %s = %s".format(location, ulError.getValue().toString());
         }
+        return null;
+    }
+
+    public String nativelong_to_hex(NativeLong value)
+    {
+        int x = value.intValue();
+        //String hex = Integer.toHexString(x);
+        return Integer.toHexString(x);
+    }
+
+    public void AO64_Init_Test()
+    {
+
+        System.out.println("Checking board Initialization Defaults");
+
+        // java converts hex to int easily.  Does JNA convert NativeLong to hex?
+        BCR = new NativeLong();
+        BCR.setValue(0x00);
+        RATE_A = new NativeLong();
+        RATE_A.setValue(0x24);
+        BUFFER_OPS = new NativeLong();
+        BUFFER_OPS.setValue(0x0C);
+        FW_REV = new NativeLong();
+        FW_REV.setValue(0x10);
+
+        // Reset board to defaults
+        INSTANCE.AO64_66_Initialize(ulBdNum, ulError);
+        check_error("AO64_66_Initialize");
+
+        System.out.println("BCR Reads : ....... (0x481X) : " + nativelong_to_hex(INSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, BCR )));
+        System.out.println("SMPL_RATE Reads: .. (0x00C0) : " + nativelong_to_hex(INSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, RATE_A )));
+        System.out.println("BUFF_OP Reads : ... (0x1400) : " + nativelong_to_hex(INSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, BUFFER_OPS)));
+        System.out.println("FIRM_REV Reads: ...          : " + nativelong_to_hex(INSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, FW_REV)));
+
+    }
+
+    public NativeLong auto_calibration()
+    {
+        NativeLong out = INSTANCE.AO64_66_Autocal(ulBdNum, ulError);
+        return out;
+    }
+
+    public void AO64_Basic_output_test()
+    {
+        System.out.println("output Channels basic operation and shorts:");
+
+        System.out.println("Intializing the board");
+        BCR = new NativeLong();
+        BCR.setValue(0x00);
+        NativeLong val_1 = new NativeLong();
+        val_1.setValue(0x8000);
+        NativeLong val_2 = new NativeLong();
+        val_2.setValue(0x0030);
+
+        INSTANCE.AO64_66_Write_Local32(ulBdNum, ulError, BCR, val_1);
+        if(auto_calibration().intValue() != 1)
+        {
+            System.out.println("Autocal Failed");
+        } else {
+            System.out.println("Autocal passed");
+        }
+
+        INSTANCE.AO64_66_Write_Local32(ulBdNum, ulError, BCR, val_2);
+
     }
 
 }
