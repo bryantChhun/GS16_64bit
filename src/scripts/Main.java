@@ -1,7 +1,7 @@
 package scripts;
 
 import com.sun.jna.NativeLong;
-
+import operations.*;
 
 public class Main {
 
@@ -30,12 +30,9 @@ public class Main {
     public static void main(String[] args) {
         example ex = new example();
 
-        ex.AO64_Init_Test();
+        AO64_Init_test init = new AO64_Init_test(ex.INSTANCE, ex.ulBdNum, ex.ulError);
 
-//        if(ex.auto_calibration().intValue() != 1)
-//        {
-//            System.out.println("Autocal failed");
-//        }
+        AO64_Basic_output_test bo_test = new AO64_Basic_output_test(ex.INSTANCE, ex.ulBdNum, ex.ulError);
 
         ex.close_handle();
 
