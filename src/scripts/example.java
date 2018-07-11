@@ -26,7 +26,7 @@ public class example {
 
     /**
      * constructor creates instance of the JNA library
-     *  Also initializes the board.
+     *  Also initializes the board with FindBoard and GetHandle
      */
     public example() {
         System.out.println("constructing example");

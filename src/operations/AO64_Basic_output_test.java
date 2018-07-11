@@ -14,7 +14,7 @@ public class AO64_Basic_output_test {
     public AO64_Basic_output_test(AO64_64b_Driver_CLibrary INSTANCE, NativeLong ulBdNum, NativeLongByReference ulError)
     {
         lINSTANCE = INSTANCE;
-        System.out.println("/nOutput Channels basic operation and shorts:");
+        System.out.println("\nOutput Channels basic operation and shorts:");
 
         System.out.println("Intializing the board");
         BCR = new NativeLong();
@@ -25,22 +25,44 @@ public class AO64_Basic_output_test {
         val_2.setValue(0x0030);
 
         lINSTANCE.AO64_66_Write_Local32(ulBdNum, ulError, BCR, val_1);
+        System.out.println("Initialization Complete");
+        System.out.println("Autocalibrating the board");
         if(lINSTANCE.AO64_66_Autocal(ulBdNum, ulError).intValue() != 1)
         {
             System.out.println("Autocal Failed");
         } else {
-            System.out.println("Autocal passed");
+            System.out.println("Autocal Passed");
         }
 
+        System.out.println("Setting Offset Binary and Rate A Generator to HIGH");
         lINSTANCE.AO64_66_Write_Local32(ulBdNum, ulError, BCR, val_2);
 
     }
 
-    private void Set_AO64_to_FFE0()
+    private void set_AO64_to_0020()
     {
         NativeLong val = new NativeLong();
         val.setValue(0x0020);
         lINSTANCE.AO64_66_Write_Local32(ulBdNum, ulError, BCR, val);
+    }
+
+    private void set_AO64_to_8000()
+    {
+
+    }
+
+    private void set_AO64_to_FFE0()
+    {
+        NativeLong BUFFER_OPS = new NativeLong();
+        BUFFER_OPS.setValue(0x0C);
+        NativeLong val = new NativeLong();
+        val.setValue(0x0020);
+        lINSTANCE.AO64_66_Write_Local32(ulBdNum, ulError, BUFFER_OPS, val);
+    }
+
+    private void set_AO64_to_walking()
+    {
+
     }
 
     public NativeLong auto_calibration(AO64_64b_Driver_CLibrary INSTANCE)

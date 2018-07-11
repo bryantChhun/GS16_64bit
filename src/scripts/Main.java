@@ -28,12 +28,17 @@ public class Main {
      */
 
     public static void main(String[] args) {
+
+        // initialize board with findboard + gethandle
         example ex = new example();
 
+        // set default values
         AO64_Init_test init = new AO64_Init_test(ex.INSTANCE, ex.ulBdNum, ex.ulError);
 
+        // write all channels with basic outputs
         AO64_Basic_output_test bo_test = new AO64_Basic_output_test(ex.INSTANCE, ex.ulBdNum, ex.ulError);
 
+        //
         ex.close_handle();
 
         System.out.print("done with main");
