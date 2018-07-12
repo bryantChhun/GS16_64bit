@@ -1,7 +1,6 @@
 package scripts;
 
 import bindings.AO64_64b_Driver_CLibrary;
-import operations.*;
 import constants.c;
 import com.sun.jna.*;
 
@@ -9,7 +8,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
 import java.util.Arrays;
-import java.util.List;
 import com.sun.jna.NativeLong;
 import com.sun.jna.ptr.NativeLongByReference;
 
@@ -127,7 +125,7 @@ public class example {
     }
 
     // needs fixing.  Always outputs result even if ulError is null?
-    public String check_error(String location)
+    public static String check_error(String location)
     {
         if(c.ulError.equals(null))
         {
@@ -140,11 +138,32 @@ public class example {
         return null;
     }
 
-    public String nativelong_to_hex(NativeLong value)
+    public static String nativelong_to_hex(NativeLong value)
     {
         int x = value.intValue();
         //String hex = Integer.toHexString(x);
         return Integer.toHexString(x);
+    }
+
+    public static void AO64_Connect_Outputs()
+    {
+        if(c.disconnect.equals(0)){
+            return;
+        }
+        NativeLong myData = INSTANCE.AO64_66_Read_Local32(c.ulBdNum, c.ulError, c.BCR);
+        myData.setValue(myData.intValue() & ~0x4);
+        INSTANCE.AO64_66_Write_Local32(c.ulBdNum, c.ulError, c.BCR, myData);
+
+    }
+
+    public static void reset_output_to_zero()
+    {
+        System.out.println("Setting all channels to FFE0, end of write.  Press key to reset");
+        try { System.in.read(); } catch (Exception ex) { System.out.println(ex); }
+
+        for(int cntr=0 ; cntr < c.numChan.intValue() ; cntr++){
+            INSTANCE.AO64_66_Write_Local32(c.ulBdNum, c.ulError, c.OUTPUT_DATA_BUFFER, c.ReadValue.get(cntr));
+        }
     }
 
 }

@@ -1,9 +1,10 @@
 package scripts;
 
-import com.sun.jna.NativeLong;
 import operations.*;
-import constants.*;
 
+/**
+ * @author Bryant Chhun
+ */
 public class Main {
 
     /**
@@ -34,12 +35,16 @@ public class Main {
         example ex = new example();
 
         // set default values
-        AO64_Init_test init = new AO64_Init_test(ex.INSTANCE);
+        new AO64_Init_test(ex.INSTANCE);
 
         // write all channels with basic outputs
-        AO64_Basic_output_test bo_test = new AO64_Basic_output_test(ex.INSTANCE);
+        new AO64_Basic_output_test(ex.INSTANCE, ex);
+
+        // write all channels sequentially
+        new AO64_Sequential_Direct(ex.INSTANCE, ex);
 
         //
+
         ex.close_handle();
 
         System.out.print("done with main");

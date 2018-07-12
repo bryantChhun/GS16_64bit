@@ -4,6 +4,9 @@ import bindings.AO64_64b_Driver_CLibrary;
 import constants.c;
 import com.sun.jna.NativeLong;
 
+/**
+ * @author Bryant Chhun
+ */
 public class AO64_Init_test {
 
     private AO64_64b_Driver_CLibrary lINSTANCE;
