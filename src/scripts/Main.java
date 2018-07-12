@@ -43,7 +43,10 @@ public class Main {
         // write all channels sequentially
         new AO64_Sequential_Direct(ex.INSTANCE, ex);
 
-        //
+        // Write all channels simultaneously
+        new AO64_Simultaneous_Direct(ex.INSTANCE, ex);
+
+
 
         ex.close_handle();
 

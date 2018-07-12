@@ -107,8 +107,7 @@ public class example {
         c.ReadValue = Arrays.asList(new NativeLong[16385]);
         NativeLong val = new NativeLong();
         for(int i=0; i<c.numChan.intValue(); i++){
-           // ReadValue.set(i, ((i << id_off.intValue()) | (1 < eog.intValue())) | (0x8000) );
-            val.setValue(0x0000 | (1 << c.eog.intValue()) );
+            val.setValue( (i << c.id_off.intValue()) | (1 << c.eog.intValue()) | 0x8000 );
             c.ReadValue.set(i, val);
         }
 
