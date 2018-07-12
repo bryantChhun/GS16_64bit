@@ -8,10 +8,11 @@ import com.sun.jna.NativeLong;
 public class AO64_Init_test {
 
     public NativeLong BCR, Reserved, Reserved1, BUFFER_OPS, FW_REV, AUTO_CAL, OUTPUT_DATA_BUFFER, BUFFER_SIZE, BUFFER_THRSHLD, RATE_A, RATE_B;
+    private AO64_64b_Driver_CLibrary lINSTANCE;
 
     public AO64_Init_test(AO64_64b_Driver_CLibrary INSTANCE, NativeLong ulBdNum, NativeLongByReference ulError)
     {
-        //super();
+        lINSTANCE = INSTANCE;
         System.out.println("\nChecking board Initialization Defaults");
 
         // java converts hex to int easily.  JNA converts NativeLong to hex
@@ -27,13 +28,12 @@ public class AO64_Init_test {
         FW_REV.setValue(0x10);
 
         // Reset board to defaults
-        INSTANCE.AO64_66_Initialize(ulBdNum, ulError);
+        lINSTANCE.AO64_66_Initialize(ulBdNum, ulError);
 
-        System.out.println("BCR Reads : ....... (0x481X) : " + nativelong_to_hex(INSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, BCR )));
-        System.out.println("SMPL_RATE Reads: .. (0x00C0) : " + nativelong_to_hex(INSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, RATE_A )));
-        System.out.println("BUFF_OP Reads : ... (0x1400) : " + nativelong_to_hex(INSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, BUFFER_OPS)));
-        System.out.println("FIRM_REV Reads: ...          : " + nativelong_to_hex(INSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, FW_REV)));
-
+        System.out.println("BCR Reads : ....... (0x481X) : " + nativelong_to_hex(lINSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, BCR )));
+        System.out.println("SMPL_RATE Reads: .. (0x00C0) : " + nativelong_to_hex(lINSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, RATE_A )));
+        System.out.println("BUFF_OP Reads : ... (0x1400) : " + nativelong_to_hex(lINSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, BUFFER_OPS)));
+        System.out.println("FIRM_REV Reads: ...          : " + nativelong_to_hex(lINSTANCE.AO64_66_Read_Local32(ulBdNum, ulError, FW_REV)));
 
     }
 
