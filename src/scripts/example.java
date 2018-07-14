@@ -103,12 +103,9 @@ public class example {
             c.disconnect.setValue(1);
         }
         // Example uses the below to reset outputs to midscale
-        // java has problems combining bitwise operators with int/hex, not treating int=0 as boolean false?
-        c.ReadValue = Arrays.asList(new NativeLong[16385]);
-        NativeLong val = new NativeLong();
+        c.ReadValue = new NativeLong[16385];
         for(int i=0; i<c.numChan.intValue(); i++){
-            val.setValue( (i << c.id_off.intValue()) | (1 << c.eog.intValue()) | 0x8000 );
-            c.ReadValue.set(i, val);
+            c.ReadValue[i] = new NativeLong( (i << c.id_off.intValue()) | (1 << c.eog.intValue()) | 0x8000 );
         }
 
         System.out.println("numChan : ... : " + c.numChan);
@@ -157,11 +154,11 @@ public class example {
 
     public static void reset_output_to_zero()
     {
-        System.out.println("Setting all channels to FFE0, end of write.  Press key to reset");
+        System.out.println("End of write.  Setting all channels to midscale  Press key to reset");
         try { System.in.read(); } catch (Exception ex) { System.out.println(ex); }
 
         for(int cntr=0 ; cntr < c.numChan.intValue() ; cntr++){
-            INSTANCE.AO64_66_Write_Local32(c.ulBdNum, c.ulError, c.OUTPUT_DATA_BUFFER, c.ReadValue.get(cntr));
+            INSTANCE.AO64_66_Write_Local32(c.ulBdNum, c.ulError, c.OUTPUT_DATA_BUFFER, c.ReadValue[cntr]);
         }
     }
 

@@ -18,6 +18,8 @@ public class AO64_Sequential_Direct {
         lINSTANCE= INSTANCE;
         lex = ex;
 
+        System.out.println("\nSequential direct outputs :");
+
         System.out.println("Intializing the board");
         lINSTANCE.AO64_66_Initialize(c.ulBdNum, c.ulError);
         System.out.println("Initialization Complete");

@@ -18,6 +18,8 @@ public class AO64_Simultaneous_Direct {
         lINSTANCE= INSTANCE;
         lex = ex;
 
+        System.out.println("\nSimultaneous Direct outputs");
+
         System.out.println("Intializing the board");
         lINSTANCE.AO64_66_Initialize(c.ulBdNum, c.ulError);
         System.out.println("Initialization Complete");
@@ -43,7 +45,7 @@ public class AO64_Simultaneous_Direct {
         lex.AO64_Connect_Outputs();
 
         System.out.println(String.format("BCR Reads: %s", lex.nativelong_to_hex(lINSTANCE.AO64_66_Read_Local32(c.ulBdNum, c.ulError, c.BCR))));
-        System.out.println(String.format("BUFF_OP READS: %s", lex.nativelong_to_hex(lINSTANCE.AO64_66_Read_Local32(c.ulBdNum, c.ulError, c.BCR))));
+        System.out.println(String.format("BUFF_OP READS: %s", lex.nativelong_to_hex(lINSTANCE.AO64_66_Read_Local32(c.ulBdNum, c.ulError, c.BUFFER_OPS))));
 
         System.out.println("Please verify that all Channels are now at Zero Volts");
         try { System.in.read(); } catch (Exception ex) { System.out.println(ex); }
