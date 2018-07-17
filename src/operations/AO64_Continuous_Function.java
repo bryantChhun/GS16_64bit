@@ -8,6 +8,7 @@ import com.sun.jna.NativeLong;
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinDef.DWORD;
+import com.sun.jna.platform.KeyboardUtils;
 
 
 /**
@@ -33,9 +34,9 @@ public class AO64_Continuous_Function {
         numTimes = 4096;
         Event = new GS_NOTIFY_OBJECT();
         EventStatus = new DWORD();
-        WAIT_ABANDONED = new DWORD(); WAIT_ABANDONED.setValue(0x00000080L);
-        WAIT_OBJECT_0 = new DWORD(); WAIT_OBJECT_0.setValue(0x00000000L);
-        WAIT_TIMEOUT = new DWORD(); WAIT_TIMEOUT.setValue(0x00000102L);
+        WAIT_ABANDONED = new DWORD(); WAIT_ABANDONED.setValue(0x00000080);
+        WAIT_OBJECT_0 = new DWORD(); WAIT_OBJECT_0.setValue(0x00000000);
+        WAIT_TIMEOUT = new DWORD(); WAIT_TIMEOUT.setValue(0x00000102);
         WAIT_FAILED = new DWORD(); WAIT_FAILED.setValue(0xFFFFFFFF);
         c.ulChannel = new NativeLong(); c.ulChannel.setValue(0x01);
         c.ulWords = new NativeLong(); c.ulWords.setValue(0x10000);
@@ -140,11 +141,16 @@ public class AO64_Continuous_Function {
 
         do {
 
+            // need enum here?  Event Status needs to be a DWORD enum  or switch case won't work.
+            // example uses switch/case, which must be compile-time evaluable.  Enums might not work here.
             EventStatus.setValue(Kernel32.INSTANCE.WaitForSingleObject(myHandle, 3*1000));
 
-            switch(EventStatus)
+            switch(EventStatus.intValue())
             {
-                case WAIT_OBJECT_0:
+                case 0://wait_object_0, object is signaled;
+                case 0x80://wait abandoned;
+                case 0x102://wait timeout.  object stat is non signaled
+                case 0xFFFFFFFF:// wait failed.  Function failed.  call GetLastError for extended info.
 
             }
 
