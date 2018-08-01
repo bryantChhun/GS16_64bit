@@ -31,7 +31,7 @@ public class AO64_Continuous_Function {
 
         lINSTANCE= INSTANCE;
         lex = ex;
-        numTimes = 4096;
+        numTimes = 4096; //Warning: allocated buffer allows 256k-samples, don't overflow.
         Event = new GS_NOTIFY_OBJECT();
         EventStatus = new DWORD();
         WAIT_ABANDONED = new DWORD(); WAIT_ABANDONED.setValue(0x00000080);
@@ -102,19 +102,21 @@ public class AO64_Continuous_Function {
 
 
     private void generate_square(){
+        c.testptr.
 
         // this loop should generate a 24.4 Hz square wave on 16 channels
         // 100000 / (65536/16) 100kHz sample rate, 65536 samples, 16 channels
         for(loop=0; loop<numTimes; loop++)
         {
-            // ex uses !(loop%2),
-            // which I read as "if loop is divisible by 2, return 0 or False.  ! operator evaluates as True"
-            // Therefore, "if loop is divisible by 2, execute"
+//             ex uses !(loop%2),
+//             which I read as "if loop is divisible by 2, return 0 or False.  ! operator evaluates as True"
+//             Therefore, "if loop is divisible by 2, execute"
             if(loop%2 == 0) {
 
                 // assign all 16 channels
                 for (int i = 0; i < 16; i++) {
-                    (c.BuffPtr.getValue().intValue() + (loop * 16) + i) =
+                    (c.BuffPtr.getValue().intValue() + (loop * 16) + i) = ( (i << c.id_off.intValue()) | 0x4000 );
+                    (c.BuffPtr2.getPointer() + (loop * 16) + i) = ( (i << c.id_off.intValue()) | 0x4000 );
                 }
                 // insert EOG tag
             } else {
@@ -139,22 +141,22 @@ public class AO64_Continuous_Function {
         lex.AO64_Connect_Outputs();
         lINSTANCE.AO64_66_Enable_Clock(c.ulBdNum, c.ulError);
 
-        do {
-
-            // need enum here?  Event Status needs to be a DWORD enum  or switch case won't work.
-            // example uses switch/case, which must be compile-time evaluable.  Enums might not work here.
-            EventStatus.setValue(Kernel32.INSTANCE.WaitForSingleObject(myHandle, 3*1000));
-
-            switch(EventStatus.intValue())
-            {
-                case 0://wait_object_0, object is signaled;
-                case 0x80://wait abandoned;
-                case 0x102://wait timeout.  object stat is non signaled
-                case 0xFFFFFFFF:// wait failed.  Function failed.  call GetLastError for extended info.
-
-            }
-
-        } while();
+//        do {
+//
+//            // need enum here?  Event Status needs to be a DWORD enum  or switch case won't work.
+//            // example uses switch/case, which must be compile-time evaluable.  Enums might not work here.
+//            EventStatus.setValue(Kernel32.INSTANCE.WaitForSingleObject(myHandle, 3*1000));
+//
+//            switch(EventStatus.intValue())
+//            {
+//                case 0://wait_object_0, object is signaled;
+//                case 0x80://wait abandoned;
+//                case 0x102://wait timeout.  object stat is non signaled
+//                case 0xFFFFFFFF:// wait failed.  Function failed.  call GetLastError for extended info.
+//
+//            }
+//
+//        } while();
         // no java equiv of kbhit (keyboard hit) so will just use System.in.read()
 
     }

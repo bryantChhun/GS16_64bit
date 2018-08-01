@@ -1,7 +1,9 @@
 package constants;
 
 import com.sun.jna.NativeLong;
+import com.sun.jna.Pointer;
 import com.sun.jna.ptr.NativeLongByReference;
+import com.sun.jna.ptr.PointerByReference;
 
 import java.util.List;
 
@@ -24,8 +26,11 @@ public class c {
     // input/output values from board
     public static NativeLong ValueRead, ValueRead1;
     public static NativeLong[] ReadValue;
-    public static NativeLong[] ulData;
+    public static NativeLong[] ulData; // this is an ARRAY of NativeLong.  Some examples have huge numbers of elements (0x20000)
     public static NativeLongByReference BuffPtr, NewBuffPtr;
+    public static PointerByReference BuffPtr2;
+    public static Pointer testptr;
+
 
     // for DMA memory handling
     public static NativeLong LOCAL;
