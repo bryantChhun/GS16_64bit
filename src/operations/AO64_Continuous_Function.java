@@ -69,9 +69,9 @@ public class AO64_Continuous_Function {
 
 
         // setting pointers
-        c.ulData = new NativeLong[131072];
+        //c.ulData = new NativeLong[131072];
         // in the example, BuffPtr = REFERENCE to ulData[0]
-        c.BuffPtr.setValue(c.ulData[0]);
+        //c.BuffPtr.setValue(c.ulData[0]);
 
 
         // buffer threshold
@@ -80,31 +80,47 @@ public class AO64_Continuous_Function {
 
         generate_square();
 
-        myHandle = Kernel32.INSTANCE.CreateEvent(null, false, false, null);
-        if( myHandle == null){
-            System.out.println("Insufficient Resources ...");
-            try { System.in.read(); } catch (Exception except) { System.out.println(except); }
-            System.exit(1);
-        }
+//        myHandle = Kernel32.INSTANCE.CreateEvent(null, false, false, null);
+//        if( myHandle == null){
+//            System.out.println("Insufficient Resources ...");
+//            try { System.in.read(); } catch (Exception except) { System.out.println(except); }
+//            System.exit(1);
+//        }
 
         // Store event handle
         // will this assignment work?
-        Event.hEvent.setPointer(myHandle.getPointer());
-        NativeLong ulValue = new NativeLong(); ulValue.setValue(0x04);
-        c.LOCAL = new NativeLong(); c.LOCAL.setValue(0);
-        lINSTANCE.AO64_66_EnableInterrupt(c.ulBdNum, ulValue, c.LOCAL, c.ulError);
-        lINSTANCE.AO64_66_Register_Interrupt_Notify(c.ulBdNum, Event, ulValue, c.LOCAL, c.ulError);
+//        Event.hEvent.setPointer(myHandle.getPointer());
+//        NativeLong ulValue = new NativeLong(); ulValue.setValue(0x04);
+//        c.LOCAL = new NativeLong(); c.LOCAL.setValue(0);
+//        lINSTANCE.AO64_66_EnableInterrupt(c.ulBdNum, ulValue, c.LOCAL, c.ulError);
+//        lINSTANCE.AO64_66_Register_Interrupt_Notify(c.ulBdNum, Event, ulValue, c.LOCAL, c.ulError);
 
         System.out.println("Continuously Writing using interrupts now....");
+        NativeLong channel = new NativeLong(); channel.setValue(0x01);
+        NativeLong words = new NativeLong(); words.setValue(0x10000);
+        lINSTANCE.AO64_66_Open_DMA_Channel(c.ulBdNum, channel, c.ulError);
+        lINSTANCE.AO64_66_DMA_Transfer(c.ulBdNum, channel, words, c.BuffPtr, c.ulError);
+        lINSTANCE.AO64_66_DMA_Transfer(c.ulBdNum, channel, words, c.BuffPtr, c.ulError);
+        lINSTANCE.AO64_66_DMA_Transfer(c.ulBdNum, channel, words, c.BuffPtr, c.ulError);
 
-        DMA_sequence();
+        lex.AO64_Connect_Outputs();
+        lINSTANCE.AO64_66_Enable_Clock(c.ulBdNum, c.ulError);
+        System.out.println("Verify that Channels are written with square function");
+        try { System.in.read(); } catch (Exception except) { System.out.println(except); }
 
-        lINSTANCE.AO64_66_Cancel_Interrupt_Notify(c.ulBdNum, Event, c.ulError);
-        lINSTANCE.AO64_66_DisableInterrupt(c.ulBdNum, ulValue, c.LOCAL, c.ulError);
+        System.out.println("Disabling clock");
         lINSTANCE.AO64_66_Disable_Clock(c.ulBdNum, c.ulError);
-        lINSTANCE.AO64_66_Close_DMA_Channel(c.ulBdNum, c.ulChannel, c.ulError);
+        System.out.println("Closing DMA channel");
+        lINSTANCE.AO64_66_Close_DMA_Channel(c.ulBdNum, channel, c.ulError);
 
-        Kernel32.INSTANCE.CloseHandle(myHandle);
+//        DMA_sequence();
+
+//        lINSTANCE.AO64_66_Cancel_Interrupt_Notify(c.ulBdNum, Event, c.ulError);
+//        lINSTANCE.AO64_66_DisableInterrupt(c.ulBdNum, ulValue, c.LOCAL, c.ulError);
+//        lINSTANCE.AO64_66_Disable_Clock(c.ulBdNum, c.ulError);
+//        lINSTANCE.AO64_66_Close_DMA_Channel(c.ulBdNum, c.ulChannel, c.ulError);
+
+//        Kernel32.INSTANCE.CloseHandle(myHandle);
     }
 
 
