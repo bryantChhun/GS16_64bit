@@ -2,6 +2,10 @@ package operations;
 
 import bindings.AO64_64b_Driver_CLibrary;
 import bindings.GS_NOTIFY_OBJECT;
+import com.sun.jna.Memory;
+import com.sun.jna.Native;
+import com.sun.jna.Pointer;
+import com.sun.jna.ptr.NativeLongByReference;
 import constants.c;
 import scripts.example;
 import com.sun.jna.NativeLong;
@@ -26,8 +30,11 @@ public class AO64_Continuous_Function {
     private DWORD EventStatus, WAIT_ABANDONED, WAIT_OBJECT_0, WAIT_TIMEOUT, WAIT_FAILED;
     private int loop, numTimes;
     private example lex;
+    private NativeLong dataval;
 
     public AO64_Continuous_Function(AO64_64b_Driver_CLibrary INSTANCE, example ex){
+
+        System.out.println("\nContinuous function:");
 
         lINSTANCE= INSTANCE;
         lex = ex;
@@ -40,8 +47,7 @@ public class AO64_Continuous_Function {
         WAIT_FAILED = new DWORD(); WAIT_FAILED.setValue(0xFFFFFFFF);
         c.ulChannel = new NativeLong(); c.ulChannel.setValue(0x01);
         c.ulWords = new NativeLong(); c.ulWords.setValue(0x10000);
-
-        System.out.println("\nContinuous function:");
+        dataval = new NativeLong();
 
         System.out.println("Intializing the board");
         lINSTANCE.AO64_66_Initialize(c.ulBdNum, c.ulError);
@@ -66,6 +72,7 @@ public class AO64_Continuous_Function {
         c.ulData = new NativeLong[131072];
         // in the example, BuffPtr = REFERENCE to ulData[0]
         c.BuffPtr.setValue(c.ulData[0]);
+
 
         // buffer threshold
         NativeLong val = new NativeLong(); val.setValue(65536);
@@ -102,7 +109,8 @@ public class AO64_Continuous_Function {
 
 
     private void generate_square(){
-        c.testptr.
+
+        final Pointer ex8p = new Memory(100 * Native.getNativeSize(NativeLong.class));
 
         // this loop should generate a 24.4 Hz square wave on 16 channels
         // 100000 / (65536/16) 100kHz sample rate, 65536 samples, 16 channels
@@ -115,17 +123,25 @@ public class AO64_Continuous_Function {
 
                 // assign all 16 channels
                 for (int i = 0; i < 16; i++) {
-                    (c.BuffPtr.getValue().intValue() + (loop * 16) + i) = ( (i << c.id_off.intValue()) | 0x4000 );
-                    (c.BuffPtr2.getPointer() + (loop * 16) + i) = ( (i << c.id_off.intValue()) | 0x4000 );
+                    dataval.setValue( (i << c.id_off.intValue()) | 0x4000 );
+                    // should offset = loop*Native.getNativeSize(NativeLong.class) + i ???
+                    ex8p.setNativeLong(loop*16+i, dataval);
                 }
-                // insert EOG tag
+                // eog tag is appended to last dataframe, i=15
+                dataval.setValue( (15 << c.id_off.intValue()) | 0x4000 | (1 << c.eog.intValue()));
+                ex8p.setNativeLong(loop*16+15, dataval);
             } else {
                 for (int i = 0; i < 16; i++) {
-                    (c.BuffPtr.getValue().intValue() + (loop * 16) + i) =
+                    dataval.setValue( (i << c.id_off.intValue()) | 0xC000 );
+                    ex8p.setNativeLong(loop*16+i, dataval);
                 }
-                // insert EOG tag
+                // eog tag is appended to last dataframe, i=15
+                dataval.setValue( (15 << c.id_off.intValue()) | 0xC000 | (1 << c.eog.intValue()));
+                ex8p.setNativeLong(loop*16+15, dataval);
             }
         } // end for loop
+
+        c.BuffPtr.setPointer(ex8p);
 
     } // end of generate_square
 
