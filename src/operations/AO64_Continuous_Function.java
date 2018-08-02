@@ -28,7 +28,7 @@ public class AO64_Continuous_Function {
     private GS_NOTIFY_OBJECT Event;
     private HANDLE myHandle;
     private DWORD EventStatus, WAIT_ABANDONED, WAIT_OBJECT_0, WAIT_TIMEOUT, WAIT_FAILED;
-    private int loop, numTimes;
+    private int numTimes;
     private example lex;
     private NativeLong dataval;
 
@@ -38,7 +38,7 @@ public class AO64_Continuous_Function {
 
         lINSTANCE= INSTANCE;
         lex = ex;
-        numTimes = 4096; //Warning: allocated buffer allows 256k-samples, don't overflow.
+        numTimes = 1024; //Warning: allocated buffer allows 256k-samples, don't overflow.
         Event = new GS_NOTIFY_OBJECT();
         EventStatus = new DWORD();
         WAIT_ABANDONED = new DWORD(); WAIT_ABANDONED.setValue(0x00000080);
@@ -126,12 +126,16 @@ public class AO64_Continuous_Function {
 
     private void generate_square(){
 
-        final Pointer ex8p = new Memory(100 * Native.getNativeSize(NativeLong.class));
+        //final Pointer ex8p = new Memory(numTimes * Native.getNativeSize(NativeLong.class)+16);
+        final Pointer ex8p = new Memory(65536);
 
         // this loop should generate a 24.4 Hz square wave on 16 channels
         // 100000 / (65536/16) 100kHz sample rate, 65536 samples, 16 channels
-        for(loop=0; loop<numTimes; loop++)
+        for(int loop=0; loop<numTimes; loop++)
         {
+            if(loop%64 == 0){
+                System.out.printf("loop val = %s\n", loop);
+            }
 //             ex uses !(loop%2),
 //             which I read as "if loop is divisible by 2, return 0 or False.  ! operator evaluates as True"
 //             Therefore, "if loop is divisible by 2, execute"
@@ -141,23 +145,35 @@ public class AO64_Continuous_Function {
                 for (int i = 0; i < 16; i++) {
                     dataval.setValue( (i << c.id_off.intValue()) | 0x4000 );
                     // should offset = loop*Native.getNativeSize(NativeLong.class) + i ???
-                    ex8p.setNativeLong(loop*16+i, dataval);
+                    ex8p.setNativeLong(loop * Native.getNativeSize(NativeLong.class) + i, dataval);
                 }
                 // eog tag is appended to last dataframe, i=15
                 dataval.setValue( (15 << c.id_off.intValue()) | 0x4000 | (1 << c.eog.intValue()));
-                ex8p.setNativeLong(loop*16+15, dataval);
+                ex8p.setNativeLong(loop * Native.getNativeSize(NativeLong.class) + 15, dataval);
             } else {
                 for (int i = 0; i < 16; i++) {
                     dataval.setValue( (i << c.id_off.intValue()) | 0xC000 );
-                    ex8p.setNativeLong(loop*16+i, dataval);
+                    ex8p.setNativeLong(loop * Native.getNativeSize(NativeLong.class) + i, dataval);
                 }
                 // eog tag is appended to last dataframe, i=15
                 dataval.setValue( (15 << c.id_off.intValue()) | 0xC000 | (1 << c.eog.intValue()));
-                ex8p.setNativeLong(loop*16+15, dataval);
+                ex8p.setNativeLong(loop * Native.getNativeSize(NativeLong.class) + 15, dataval);
             }
         } // end for loop
 
-        c.BuffPtr.setPointer(ex8p);
+        System.out.println("ex8p class = " + ex8p.getClass().toString());
+        System.out.println("ex8p size = " + ((Memory) ex8p).size());
+        System.out.println("ex8p val 0 = " + ex8p.getNativeLong(0).longValue());
+        System.out.println("ex8p val 3 = " + ex8p.getNativeLong(3).longValue());
+        System.out.println("ex8p val 7 = " + ex8p.getNativeLong(7).longValue());
+        System.out.println("ex8p val 11 = " + ex8p.getNativeLong(11).longValue());
+        System.out.println("ex8p val 15 = " + ex8p.getNativeLong(15).longValue());
+        System.out.println("ex8p val 16 = " + ex8p.getNativeLong(16).longValue());
+        System.out.println("ex8p val 19 = " + ex8p.getNativeLong(19).longValue());
+        System.out.println("ex8p val 23 = " + ex8p.getNativeLong(23).longValue());
+        System.out.println("ex8p val 27 = " + ex8p.getNativeLong(27).longValue());
+        System.out.println("ex8p val 31 = " + ex8p.getNativeLong(31).longValue());
+        //c.BuffPtr.setPointer(ex8p);
 
     } // end of generate_square
 
