@@ -127,7 +127,7 @@ public class AO64_Continuous_Function {
     private void generate_square(){
 
         //final Pointer ex8p = new Memory(numTimes * Native.getNativeSize(NativeLong.class)+16);
-        final Pointer ex8p = new Memory(65536);
+        Pointer ex8p = new Memory(65536);
 
         // this loop should generate a 24.4 Hz square wave on 16 channels
         // 100000 / (65536/16) 100kHz sample rate, 65536 samples, 16 channels

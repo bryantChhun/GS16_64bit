@@ -62,6 +62,7 @@ public class AO64_Simultaneous_Direct {
                 try { System.in.read(); } catch (Exception ex) { System.out.println(ex); }
             } else {
                 System.out.println("Please Verify that all Channels are now at Half PFS");
+                try { System.in.read(); } catch (Exception ex) { System.out.println(ex); }
             }
         }
 

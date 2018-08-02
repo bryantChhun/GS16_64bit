@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f876f6e5-7942-4946-8bcd-aa9291a6b6e6" name="Default" comment="fixed ReadValue in Constants">
+    <list default="true" id="f876f6e5-7942-4946-8bcd-aa9291a6b6e6" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/constants/EventStatus.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/constants/EventStatus.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/constants/c.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/constants/c.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/operations/AO64_Continuous_Function.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/operations/AO64_Continuous_Function.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/operations/AO64_Simultaneous_Direct.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/operations/AO64_Simultaneous_Direct.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/scripts/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/scripts/Main.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -25,8 +26,8 @@
       <file leaf-file-name="AO64_64b_Driver_CLibrary.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/bindings/AO64_64b_Driver_CLibrary.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="6103">
-              <caret line="366" column="57" selection-start-line="366" selection-start-column="57" selection-end-line="366" selection-end-column="57" />
+            <state relative-caret-position="340">
+              <caret line="385" column="75" lean-forward="true" selection-start-line="385" selection-start-column="75" selection-end-line="385" selection-end-column="75" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -34,11 +35,14 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Main.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Main.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/scripts/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="678">
-              <caret line="48" selection-start-line="48" selection-end-line="48" />
+            <state relative-caret-position="342">
+              <caret line="69" column="80" lean-forward="true" selection-start-line="69" selection-start-column="80" selection-end-line="69" selection-end-column="80" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -46,8 +50,8 @@
       <file leaf-file-name="example.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/scripts/example.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1615">
-              <caret line="104" column="62" selection-start-line="104" selection-start-column="62" selection-end-line="104" selection-end-column="62" />
+            <state relative-caret-position="-9">
+              <caret line="52" column="34" lean-forward="true" selection-start-line="52" selection-start-column="34" selection-end-line="52" selection-end-column="34" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -55,11 +59,23 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="AO64_Continuous_Function.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="AO64_Init_test.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/operations/AO64_Init_test.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="410">
+              <caret line="43" column="5" lean-forward="true" selection-start-line="43" selection-start-column="5" selection-end-line="43" selection-end-column="5" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AO64_Continuous_Function.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/operations/AO64_Continuous_Function.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="144">
-              <caret line="104" column="18" lean-forward="true" selection-start-line="104" selection-start-column="18" selection-end-line="104" selection-end-column="18" />
+            <state relative-caret-position="158">
+              <caret line="145" column="76" lean-forward="true" selection-start-line="145" selection-start-column="76" selection-end-line="145" selection-end-column="76" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -70,8 +86,8 @@
       <file leaf-file-name="c.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/constants/c.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="493">
-              <caret line="31" column="34" selection-start-line="31" selection-start-column="34" selection-end-line="31" selection-end-column="34" />
+            <state relative-caret-position="476">
+              <caret line="30" column="83" selection-start-line="30" selection-start-column="83" selection-end-line="30" selection-end-column="83" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -106,8 +122,8 @@
       <file leaf-file-name="AO64_Simultaneous_Direct.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/operations/AO64_Simultaneous_Direct.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="952">
-              <caret line="59" column="48" selection-start-line="59" selection-start-column="48" selection-end-line="59" selection-end-column="48" />
+            <state relative-caret-position="302">
+              <caret line="60" column="91" lean-forward="true" selection-start-line="60" selection-start-column="16" selection-end-line="60" selection-end-column="91" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -126,12 +142,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>getinstance</find>
-      <find>deviceInfo</find>
-      <find>initial</find>
-      <find>string</find>
-      <find>GS_Physical</find>
-      <find>init</find>
       <find>bytebuffer</find>
       <find>BoardNumber</find>
       <find>u32</find>
@@ -151,11 +161,17 @@
       <find>buffer</find>
       <find>FW_REV</find>
       <find>OUTPUT_</find>
-      <find>id_off</find>
       <find>ulError</find>
       <find>valueRead</find>
       <find>EventStatus</find>
       <find>numtimes</find>
+      <find>uldata</find>
+      <find>dataval</find>
+      <find>eog</find>
+      <find>id_off</find>
+      <find>val</find>
+      <find>connect</find>
+      <find>id_OFF</find>
     </findStrings>
     <replaceStrings>
       <replace>c.ulBdNum</replace>
@@ -190,12 +206,12 @@
         <option value="$PROJECT_DIR$/src/operations/AO64_Init_test.java" />
         <option value="$PROJECT_DIR$/src/operations/AO64_Basic_output_test.java" />
         <option value="$PROJECT_DIR$/src/operations/AO64_Sequential_Direct.java" />
-        <option value="$PROJECT_DIR$/src/scripts/example.java" />
-        <option value="$PROJECT_DIR$/src/operations/AO64_Simultaneous_Direct.java" />
-        <option value="$PROJECT_DIR$/src/scripts/Main.java" />
         <option value="$PROJECT_DIR$/src/constants/EventStatus.java" />
         <option value="$PROJECT_DIR$/src/constants/c.java" />
+        <option value="$PROJECT_DIR$/src/scripts/example.java" />
+        <option value="$PROJECT_DIR$/src/operations/AO64_Simultaneous_Direct.java" />
         <option value="$PROJECT_DIR$/src/operations/AO64_Continuous_Function.java" />
+        <option value="$PROJECT_DIR$/src/scripts/Main.java" />
       </list>
     </option>
   </component>
@@ -414,7 +430,35 @@
       <option name="project" value="LOCAL" />
       <updated>1531435302378</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="fiddled with continuous function and constants: need to know proper data types for these">
+      <created>1533081841432</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1533081841432</updated>
+    </task>
+    <task id="LOCAL-00010" summary="data is now assigned to pointer memory by offset.&#10;c.BuffPtr now points to this data pointer">
+      <created>1533155661368</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1533155661368</updated>
+    </task>
+    <task id="LOCAL-00011" summary="commented out some interrupt handling for debugging">
+      <created>1533158206819</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1533158206819</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Code to debug pointer assignment">
+      <created>1533168346688</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1533168346688</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -429,7 +473,7 @@
       <window_info anchor="right" id="Capture Analysis" order="3" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
       <window_info anchor="right" id="Maven Projects" order="3" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.22346368" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.22234637" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.2536313" />
       <window_info anchor="bottom" id="Terminal" order="7" weight="0.27039105" />
       <window_info id="Capture Tool" order="2" />
@@ -519,7 +563,11 @@
     <MESSAGE value="Work on basic output" />
     <MESSAGE value="Basic output completely done!" />
     <MESSAGE value="Sequential Direct done&#10;Added a few static class functions to example&#10;cleaned up some documentation" />
-    <option name="LAST_COMMIT_MESSAGE" value="Sequential Direct done&#10;Added a few static class functions to example&#10;cleaned up some documentation" />
+    <MESSAGE value="fiddled with continuous function and constants: need to know proper data types for these" />
+    <MESSAGE value="data is now assigned to pointer memory by offset.&#10;c.BuffPtr now points to this data pointer" />
+    <MESSAGE value="commented out some interrupt handling for debugging" />
+    <MESSAGE value="Code to debug pointer assignment" />
+    <option name="LAST_COMMIT_MESSAGE" value="Code to debug pointer assignment" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -807,13 +855,6 @@
       </provider>
     </entry>
     <entry file="jar://C:/Program Files/Java/jdk1.8.0_171/src.zip!/java/nio/ByteBuffer.java" />
-    <entry file="jar://$MAVEN_REPOSITORY$/net/java/dev/jna/jna/4.5.1/jna-4.5.1.jar!/com/sun/jna/Memory.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="386">
-          <caret line="42" column="37" selection-start-line="42" selection-start-column="37" selection-end-line="42" selection-end-column="37" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/net/java/dev/jna/jna/4.5.1/jna-4.5.1.jar!/com/sun/jna/Pointer.class">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-51">
@@ -846,16 +887,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/operations/AO64_Auto_Cal.java" />
-    <entry file="file://$PROJECT_DIR$/src/bindings/AO64_64b_Driver_CLibrary.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6103">
-          <caret line="366" column="57" selection-start-line="366" selection-start-column="57" selection-end-line="366" selection-end-column="57" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/operations/AO64_Basic_output_test.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2580">
@@ -866,20 +897,30 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/operations/AO64_Init_test.java">
+    <entry file="file://$PROJECT_DIR$/src/constants/EventStatus.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="20" column="29" selection-start-line="20" selection-start-column="29" selection-end-line="20" selection-end-column="29" />
+        <state relative-caret-position="153">
+          <caret line="9" lean-forward="true" selection-start-line="9" selection-end-line="9" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/operations/AO64_Simultaneous_Direct.java">
+    <entry file="file://$PROJECT_DIR$/src/bindings/AO64_64b_Driver_CLibrary.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="952">
-          <caret line="59" column="48" selection-start-line="59" selection-start-column="48" selection-end-line="59" selection-end-column="48" />
+        <state relative-caret-position="340">
+          <caret line="385" column="75" lean-forward="true" selection-start-line="385" selection-start-column="75" selection-end-line="385" selection-end-column="75" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/constants/c.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="476">
+          <caret line="30" column="83" selection-start-line="30" selection-start-column="83" selection-end-line="30" selection-end-column="83" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -896,37 +937,37 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/operations/AO64_Simultaneous_Direct.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="302">
+          <caret line="60" column="91" lean-forward="true" selection-start-line="60" selection-start-column="16" selection-end-line="60" selection-end-column="91" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/net/java/dev/jna/jna/4.5.1/jna-4.5.1.jar!/com/sun/jna/Memory.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="386">
+          <caret line="119" selection-start-line="119" selection-end-line="119" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/scripts/example.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1615">
-          <caret line="104" column="62" selection-start-line="104" selection-start-column="62" selection-end-line="104" selection-end-column="62" />
+        <state relative-caret-position="-9">
+          <caret line="52" column="34" lean-forward="true" selection-start-line="52" selection-start-column="34" selection-end-line="52" selection-end-column="34" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/scripts/Main.java">
+    <entry file="file://$PROJECT_DIR$/src/operations/AO64_Init_test.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="678">
-          <caret line="48" selection-start-line="48" selection-end-line="48" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/constants/EventStatus.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="9" lean-forward="true" selection-start-line="9" selection-end-line="9" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/constants/c.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="493">
-          <caret line="31" column="34" selection-start-line="31" selection-start-column="34" selection-end-line="31" selection-end-column="34" />
+        <state relative-caret-position="410">
+          <caret line="43" column="5" lean-forward="true" selection-start-line="43" selection-start-column="5" selection-end-line="43" selection-end-column="5" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -935,8 +976,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/operations/AO64_Continuous_Function.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="144">
-          <caret line="104" column="18" lean-forward="true" selection-start-line="104" selection-start-column="18" selection-end-line="104" selection-end-column="18" />
+        <state relative-caret-position="158">
+          <caret line="145" column="76" lean-forward="true" selection-start-line="145" selection-start-column="76" selection-end-line="145" selection-end-column="76" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/scripts/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="342">
+          <caret line="69" column="80" lean-forward="true" selection-start-line="69" selection-start-column="80" selection-end-line="69" selection-end-column="80" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
