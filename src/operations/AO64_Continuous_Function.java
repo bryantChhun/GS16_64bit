@@ -30,7 +30,7 @@ public class AO64_Continuous_Function {
     private DWORD EventStatus, WAIT_ABANDONED, WAIT_OBJECT_0, WAIT_TIMEOUT, WAIT_FAILED;
     private int numTimes;
     private example lex;
-    private NativeLong dataval;
+    public NativeLong dataval;
 
     public AO64_Continuous_Function(AO64_64b_Driver_CLibrary INSTANCE, example ex){
 
@@ -78,7 +78,9 @@ public class AO64_Continuous_Function {
         NativeLong val = new NativeLong(); val.setValue(65536);
         lINSTANCE.AO64_66_Write_Local32(c.ulBdNum, c.ulError, c.BUFFER_THRSHLD, val);
 
+        System.out.println("generating square");
         generate_square();
+        System.out.println("done generating square");
 
 //        myHandle = Kernel32.INSTANCE.CreateEvent(null, false, false, null);
 //        if( myHandle == null){
@@ -124,14 +126,14 @@ public class AO64_Continuous_Function {
     }
 
 
-    private void generate_square(){
+    public void generate_square(){
 
         //final Pointer ex8p = new Memory(numTimes * Native.getNativeSize(NativeLong.class)+16);
-        Pointer ex8p = new Memory(65536);
+        Pointer ex8p = new Memory(1280);
 
         // this loop should generate a 24.4 Hz square wave on 16 channels
         // 100000 / (65536/16) 100kHz sample rate, 65536 samples, 16 channels
-        for(int loop=0; loop<numTimes; loop++)
+        for(int loop=0; loop<10; loop++)
         {
             if(loop%64 == 0){
                 System.out.printf("loop val = %s\n", loop);
@@ -143,37 +145,26 @@ public class AO64_Continuous_Function {
 
                 // assign all 16 channels
                 for (int i = 0; i < 16; i++) {
-                    dataval.setValue( (i << c.id_off.intValue()) | 0x4000 );
-                    // should offset = loop*Native.getNativeSize(NativeLong.class) + i ???
-                    ex8p.setNativeLong(loop * Native.getNativeSize(NativeLong.class) + i, dataval);
+                    dataval.setValue( ((i << c.id_off.intValue()) | 0x4000 ) );
+                    ex8p.setNativeLong(16*loop*8 + i*8, dataval);
                 }
                 // eog tag is appended to last dataframe, i=15
                 dataval.setValue( (15 << c.id_off.intValue()) | 0x4000 | (1 << c.eog.intValue()));
-                ex8p.setNativeLong(loop * Native.getNativeSize(NativeLong.class) + 15, dataval);
+                ex8p.setNativeLong(16*loop*8 + 15*8, dataval);
             } else {
                 for (int i = 0; i < 16; i++) {
                     dataval.setValue( (i << c.id_off.intValue()) | 0xC000 );
-                    ex8p.setNativeLong(loop * Native.getNativeSize(NativeLong.class) + i, dataval);
+                    ex8p.setNativeLong(16*loop*8 + i*8, dataval);
                 }
                 // eog tag is appended to last dataframe, i=15
                 dataval.setValue( (15 << c.id_off.intValue()) | 0xC000 | (1 << c.eog.intValue()));
-                ex8p.setNativeLong(loop * Native.getNativeSize(NativeLong.class) + 15, dataval);
+                ex8p.setNativeLong(16*loop*8 + 15*8, dataval);
             }
         } // end for loop
 
-        System.out.println("ex8p class = " + ex8p.getClass().toString());
-        System.out.println("ex8p size = " + ((Memory) ex8p).size());
-        System.out.println("ex8p val 0 = " + ex8p.getNativeLong(0).longValue());
-        System.out.println("ex8p val 3 = " + ex8p.getNativeLong(3).longValue());
-        System.out.println("ex8p val 7 = " + ex8p.getNativeLong(7).longValue());
-        System.out.println("ex8p val 11 = " + ex8p.getNativeLong(11).longValue());
-        System.out.println("ex8p val 15 = " + ex8p.getNativeLong(15).longValue());
-        System.out.println("ex8p val 16 = " + ex8p.getNativeLong(16).longValue());
-        System.out.println("ex8p val 19 = " + ex8p.getNativeLong(19).longValue());
-        System.out.println("ex8p val 23 = " + ex8p.getNativeLong(23).longValue());
-        System.out.println("ex8p val 27 = " + ex8p.getNativeLong(27).longValue());
-        System.out.println("ex8p val 31 = " + ex8p.getNativeLong(31).longValue());
-        //c.BuffPtr.setPointer(ex8p);
+        System.out.println("Setting BuffPtr");
+        c.BuffPtr.setPointer(ex8p);
+        System.out.println("buffPtr is set");
 
     } // end of generate_square
 
