@@ -31,7 +31,7 @@ public class AO64_Continuous_Function {
     private int numTimes;
     private example lex;
     public NativeLong dataval;
-    private NativeLongByReference BuffPtr2;
+    public final Pointer data;
 
     public AO64_Continuous_Function(AO64_64b_Driver_CLibrary INSTANCE, example ex){
 
@@ -49,7 +49,8 @@ public class AO64_Continuous_Function {
         c.ulChannel = new NativeLong(); c.ulChannel.setValue(0x01);
         c.ulWords = new NativeLong(); c.ulWords.setValue(0x10000);
         dataval = new NativeLong();
-        BuffPtr2 = new NativeLongByReference();
+        c.BuffPtr = new NativeLongByReference();
+
 
         System.out.println("Intializing the board");
         lINSTANCE.AO64_66_Initialize(c.ulBdNum, c.ulError);
@@ -67,45 +68,43 @@ public class AO64_Continuous_Function {
             System.out.println("Autocal Passed");
         }
         System.out.println("Please Verify that all Channels are now at Zero Volts");
-        try { System.in.read(); } catch (Exception except) { System.out.println(except); }
-
-
-        // setting pointers
-        //c.ulData = new NativeLong[131072];
-        // in the example, BuffPtr = REFERENCE to ulData[0]
-        //c.BuffPtr.setValue(c.ulData[0]);
-
+        //try { System.in.read(); } catch (Exception except) { System.out.println(except); }
 
         // buffer threshold
         NativeLong val = new NativeLong(); val.setValue(65536);
         lINSTANCE.AO64_66_Write_Local32(c.ulBdNum, c.ulError, c.BUFFER_THRSHLD, val);
 
-        System.out.println("generating square");
-        generate_square();
-        System.out.println("done generating square");
+        // Generate square data
+        System.out.println("generating square, assigning pointers");
+        data = generate_square();
+        c.BuffPtr.setPointer(data.share(0));
 
-//        myHandle = Kernel32.INSTANCE.CreateEvent(null, false, false, null);
-//        if( myHandle == null){
-//            System.out.println("Insufficient Resources ...");
-//            try { System.in.read(); } catch (Exception except) { System.out.println(except); }
-//            System.exit(1);
-//        }
+        // creating handlers
+        myHandle = Kernel32.INSTANCE.CreateEvent(null, false, false, null);
+        if( myHandle == null){
+            System.out.println("Insufficient Resources ...");
+            try { System.in.read(); } catch (Exception except) { System.out.println(except); }
+            System.exit(1);
+        }
 
         // Store event handle
-        // will this assignment work?
-//        Event.hEvent.setPointer(myHandle.getPointer());
-//        NativeLong ulValue = new NativeLong(); ulValue.setValue(0x04);
-//        c.LOCAL = new NativeLong(); c.LOCAL.setValue(0);
-//        lINSTANCE.AO64_66_EnableInterrupt(c.ulBdNum, ulValue, c.LOCAL, c.ulError);
-//        lINSTANCE.AO64_66_Register_Interrupt_Notify(c.ulBdNum, Event, ulValue, c.LOCAL, c.ulError);
+        // hEvent is a U64 object, to which we assign a pointer to the handle.
+        Event.hEvent.setPointer(myHandle.getPointer());
+        NativeLong ulValue = new NativeLong(); ulValue.setValue(0x04);
+        c.LOCAL = new NativeLong(); c.LOCAL.setValue(0);
+        lINSTANCE.AO64_66_EnableInterrupt(c.ulBdNum, ulValue, c.LOCAL, c.ulError);
+        lINSTANCE.AO64_66_Register_Interrupt_Notify(c.ulBdNum, Event, ulValue, c.LOCAL, c.ulError);
 
         System.out.println("Continuously Writing using interrupts now....");
+        System.out.println("Checking data value = "+((Memory) data).size());
+
         NativeLong channel = new NativeLong(); channel.setValue(0x01);
-        NativeLong words = new NativeLong(); words.setValue(0x10000);
+        NativeLong words = new NativeLong(); words.setValue(0x64);
         lINSTANCE.AO64_66_Open_DMA_Channel(c.ulBdNum, channel, c.ulError);
-        lINSTANCE.AO64_66_DMA_Transfer(c.ulBdNum, channel, words, BuffPtr2, c.ulError);
-        lINSTANCE.AO64_66_DMA_Transfer(c.ulBdNum, channel, words, BuffPtr2, c.ulError);
-        lINSTANCE.AO64_66_DMA_Transfer(c.ulBdNum, channel, words, BuffPtr2, c.ulError);
+        NativeLong wordssent = lINSTANCE.AO64_66_DMA_Transfer(c.ulBdNum, channel, words, c.BuffPtr, c.ulError);
+        System.out.println("words sent = " + wordssent.toString());
+        //lINSTANCE.AO64_66_DMA_Transfer(c.ulBdNum, channel, words, BuffPtr, c.ulError);
+        //lINSTANCE.AO64_66_DMA_Transfer(c.ulBdNum, channel, words, c.BuffPtr, c.ulError);
 
         lex.AO64_Connect_Outputs();
         lINSTANCE.AO64_66_Enable_Clock(c.ulBdNum, c.ulError);
@@ -128,11 +127,9 @@ public class AO64_Continuous_Function {
     }
 
 
-    public void generate_square(){
+    public Memory generate_square(){
 
-        //final Pointer ex8p = new Memory(numTimes * Native.getNativeSize(NativeLong.class)+16);
-        Pointer ex8p = new Memory(1280);
-
+        Memory tempdata = new Memory(1280);
         // this loop should generate a 24.4 Hz square wave on 16 channels
         // 100000 / (65536/16) 100kHz sample rate, 65536 samples, 16 channels
         for(int loop=0; loop<10; loop++)
@@ -148,46 +145,41 @@ public class AO64_Continuous_Function {
                 // assign all 16 channels
                 for (int i = 0; i < 16; i++) {
                     dataval.setValue( ((i << c.id_off.intValue()) | 0x4000 ) );
-                    ex8p.setNativeLong(16*loop*8 + i*8, dataval);
+                    tempdata.setNativeLong(16*loop*8 + i*8, dataval);
                 }
                 // eog tag is appended to last dataframe, i=15
                 dataval.setValue( (15 << c.id_off.intValue()) | 0x4000 | (1 << c.eog.intValue()));
-                ex8p.setNativeLong(16*loop*8 + 15*8, dataval);
+                tempdata.setNativeLong(16*loop*8 + 15*8, dataval);
             } else {
                 for (int i = 0; i < 16; i++) {
                     dataval.setValue( (i << c.id_off.intValue()) | 0xC000 );
-                    ex8p.setNativeLong(16*loop*8 + i*8, dataval);
+                    tempdata.setNativeLong(16*loop*8 + i*8, dataval);
                 }
                 // eog tag is appended to last dataframe, i=15
                 dataval.setValue( (15 << c.id_off.intValue()) | 0xC000 | (1 << c.eog.intValue()));
-                ex8p.setNativeLong(16*loop*8 + 15*8, dataval);
+                tempdata.setNativeLong(16*loop*8 + 15*8, dataval);
             }
         } // end for loop
 
-        for(int j=0; j<32; j++){
-            System.out.println("memory val = " + ex8p.getNativeLong(8*j).toString());
-        }
+//        for(int j=0; j<32; j++){
+//            System.out.println("memory val = " + tempdata.getNativeLong(8*j).toString());
+//        }
 
-        System.out.println("Setting BuffPtr");
-        NativeLongByReference ptr = new NativeLongByReference();
-        //ptr.setPointer(ex8p);
-        BuffPtr2.setPointer(ex8p);
-        //c.BuffPtr.setPointer(ex8p);
-        System.out.println("buffPtr is set");
+        return tempdata;
 
     } // end of generate_square
 
-    private void DMA_sequence() {
-
-        lINSTANCE.AO64_66_Open_DMA_Channel(c.ulBdNum, c.ulChannel, c.ulError);
-        lINSTANCE.AO64_66_DMA_Transfer(c.ulBdNum, c.ulChannel, c.ulWords, c.BuffPtr, c.ulError);
-        lINSTANCE.AO64_66_DMA_Transfer(c.ulBdNum, c.ulChannel, c.ulWords, c.BuffPtr, c.ulError);
-        lINSTANCE.AO64_66_DMA_Transfer(c.ulBdNum, c.ulChannel, c.ulWords, c.BuffPtr, c.ulError);
-
-        //kbflush reads as "while there is a keyboard key in buffer, getch (get it)
-
-        lex.AO64_Connect_Outputs();
-        lINSTANCE.AO64_66_Enable_Clock(c.ulBdNum, c.ulError);
+//    private void DMA_sequence() {
+//
+//        lINSTANCE.AO64_66_Open_DMA_Channel(c.ulBdNum, c.ulChannel, c.ulError);
+//        lINSTANCE.AO64_66_DMA_Transfer(c.ulBdNum, c.ulChannel, c.ulWords, c.BuffPtr, c.ulError);
+//        lINSTANCE.AO64_66_DMA_Transfer(c.ulBdNum, c.ulChannel, c.ulWords, c.BuffPtr, c.ulError);
+//        lINSTANCE.AO64_66_DMA_Transfer(c.ulBdNum, c.ulChannel, c.ulWords, c.BuffPtr, c.ulError);
+//
+//        //kbflush reads as "while there is a keyboard key in buffer, getch (get it)
+//
+//        lex.AO64_Connect_Outputs();
+//        lINSTANCE.AO64_66_Enable_Clock(c.ulBdNum, c.ulError);
 
 //        do {
 //
@@ -207,7 +199,7 @@ public class AO64_Continuous_Function {
 //        } while();
         // no java equiv of kbhit (keyboard hit) so will just use System.in.read()
 
-    }
+//    }
 
 
 }
