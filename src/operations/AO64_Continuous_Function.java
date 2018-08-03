@@ -31,6 +31,7 @@ public class AO64_Continuous_Function {
     private int numTimes;
     private example lex;
     public NativeLong dataval;
+    private NativeLongByReference BuffPtr2;
 
     public AO64_Continuous_Function(AO64_64b_Driver_CLibrary INSTANCE, example ex){
 
@@ -48,6 +49,7 @@ public class AO64_Continuous_Function {
         c.ulChannel = new NativeLong(); c.ulChannel.setValue(0x01);
         c.ulWords = new NativeLong(); c.ulWords.setValue(0x10000);
         dataval = new NativeLong();
+        BuffPtr2 = new NativeLongByReference();
 
         System.out.println("Intializing the board");
         lINSTANCE.AO64_66_Initialize(c.ulBdNum, c.ulError);
@@ -101,9 +103,9 @@ public class AO64_Continuous_Function {
         NativeLong channel = new NativeLong(); channel.setValue(0x01);
         NativeLong words = new NativeLong(); words.setValue(0x10000);
         lINSTANCE.AO64_66_Open_DMA_Channel(c.ulBdNum, channel, c.ulError);
-        lINSTANCE.AO64_66_DMA_Transfer(c.ulBdNum, channel, words, c.BuffPtr, c.ulError);
-        lINSTANCE.AO64_66_DMA_Transfer(c.ulBdNum, channel, words, c.BuffPtr, c.ulError);
-        lINSTANCE.AO64_66_DMA_Transfer(c.ulBdNum, channel, words, c.BuffPtr, c.ulError);
+        lINSTANCE.AO64_66_DMA_Transfer(c.ulBdNum, channel, words, BuffPtr2, c.ulError);
+        lINSTANCE.AO64_66_DMA_Transfer(c.ulBdNum, channel, words, BuffPtr2, c.ulError);
+        lINSTANCE.AO64_66_DMA_Transfer(c.ulBdNum, channel, words, BuffPtr2, c.ulError);
 
         lex.AO64_Connect_Outputs();
         lINSTANCE.AO64_66_Enable_Clock(c.ulBdNum, c.ulError);
@@ -162,8 +164,15 @@ public class AO64_Continuous_Function {
             }
         } // end for loop
 
+        for(int j=0; j<32; j++){
+            System.out.println("memory val = " + ex8p.getNativeLong(8*j).toString());
+        }
+
         System.out.println("Setting BuffPtr");
-        c.BuffPtr.setPointer(ex8p);
+        NativeLongByReference ptr = new NativeLongByReference();
+        //ptr.setPointer(ex8p);
+        BuffPtr2.setPointer(ex8p);
+        //c.BuffPtr.setPointer(ex8p);
         System.out.println("buffPtr is set");
 
     } // end of generate_square
