@@ -3,7 +3,6 @@ package operations;
 import bindings.AO64_64b_Driver_CLibrary;
 import bindings.GS_NOTIFY_OBJECT;
 import com.sun.jna.Memory;
-import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.NativeLongByReference;
 import constants.c;
@@ -12,7 +11,7 @@ import com.sun.jna.NativeLong;
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinDef.DWORD;
-import com.sun.jna.platform.KeyboardUtils;
+import java.util.Scanner;
 
 
 /**
@@ -39,7 +38,7 @@ public class AO64_Continuous_Function {
 
         lINSTANCE= INSTANCE;
         lex = ex;
-        numTimes = 1024; //Warning: allocated buffer allows 256k-samples, don't overflow.
+        numTimes = 4096; //Warning: allocated buffer allows 256k-samples, don't overflow.
         Event = new GS_NOTIFY_OBJECT();
         EventStatus = new DWORD();
         WAIT_ABANDONED = new DWORD(); WAIT_ABANDONED.setValue(0x00000080);
@@ -48,8 +47,9 @@ public class AO64_Continuous_Function {
         WAIT_FAILED = new DWORD(); WAIT_FAILED.setValue(0xFFFFFFFF);
         c.ulChannel = new NativeLong(); c.ulChannel.setValue(0x01);
         c.ulWords = new NativeLong(); c.ulWords.setValue(0x10000);
-        dataval = new NativeLong();
         c.BuffPtr = new NativeLongByReference();
+        Scanner keyboard = new Scanner(System.in);
+        String input;
 
 
         System.out.println("Intializing the board");
@@ -68,7 +68,7 @@ public class AO64_Continuous_Function {
             System.out.println("Autocal Passed");
         }
         System.out.println("Please Verify that all Channels are now at Zero Volts");
-        //try { System.in.read(); } catch (Exception except) { System.out.println(except); }
+        try { System.in.read(); } catch (Exception except) { System.out.println(except); }
 
         // buffer threshold
         NativeLong val = new NativeLong(); val.setValue(65536);
@@ -90,53 +90,74 @@ public class AO64_Continuous_Function {
         // Store event handle
         // hEvent is a U64 object, to which we assign a pointer to the handle.
         Event.hEvent.setPointer(myHandle.getPointer());
-        NativeLong ulValue = new NativeLong(); ulValue.setValue(0x04);
+        // enable local interrupt (not DMA)
         c.LOCAL = new NativeLong(); c.LOCAL.setValue(0);
+        // monitor interrupt=4, Buffer threshold flag High-to-Low transition.
+        NativeLong ulValue = new NativeLong(); ulValue.setValue(0x04);
         lINSTANCE.AO64_66_EnableInterrupt(c.ulBdNum, ulValue, c.LOCAL, c.ulError);
         lINSTANCE.AO64_66_Register_Interrupt_Notify(c.ulBdNum, Event, ulValue, c.LOCAL, c.ulError);
 
         System.out.println("Continuously Writing using interrupts now....");
-        System.out.println("Checking data value = "+((Memory) data).size());
+        System.out.println("Checking data memory allocation = "+((Memory) data).size());
 
-        NativeLong channel = new NativeLong(); channel.setValue(0x01);
-        NativeLong words = new NativeLong(); words.setValue(0x64);
-        lINSTANCE.AO64_66_Open_DMA_Channel(c.ulBdNum, channel, c.ulError);
-        NativeLong wordssent = lINSTANCE.AO64_66_DMA_Transfer(c.ulBdNum, channel, words, c.BuffPtr, c.ulError);
-        System.out.println("words sent = " + wordssent.toString());
-        //lINSTANCE.AO64_66_DMA_Transfer(c.ulBdNum, channel, words, BuffPtr, c.ulError);
-        //lINSTANCE.AO64_66_DMA_Transfer(c.ulBdNum, channel, words, c.BuffPtr, c.ulError);
+        c.ulChannel = new NativeLong(); c.ulChannel.setValue(0x01);
+        c.ulWords = new NativeLong(); c.ulWords.setValue(0x10000);
+        lINSTANCE.AO64_66_Open_DMA_Channel(c.ulBdNum, c.ulChannel, c.ulError);
+        lINSTANCE.AO64_66_DMA_Transfer(c.ulBdNum, c.ulChannel, c.ulWords, c.BuffPtr, c.ulError);
+        lINSTANCE.AO64_66_DMA_Transfer(c.ulBdNum, c.ulChannel, c.ulWords, c.BuffPtr, c.ulError);
+        lINSTANCE.AO64_66_DMA_Transfer(c.ulBdNum, c.ulChannel, c.ulWords, c.BuffPtr, c.ulError);
 
         lex.AO64_Connect_Outputs();
         lINSTANCE.AO64_66_Enable_Clock(c.ulBdNum, c.ulError);
-        System.out.println("Verify that Channels are written with square function");
-        try { System.in.read(); } catch (Exception except) { System.out.println(except); }
 
-        System.out.println("Disabling clock");
+        while(true) {
+            input = keyboard.nextLine();
+
+            EventStatus.setValue(Kernel32.INSTANCE.WaitForSingleObject(myHandle, 3*1000));
+            switch(EventStatus.intValue())
+            {
+                case 0://wait_object_0, object is signaled;
+                    lINSTANCE.AO64_66_DMA_Transfer(c.ulBdNum, c.ulChannel, c.ulWords, c.BuffPtr, c.ulError);
+                    lINSTANCE.AO64_66_DMA_Transfer(c.ulBdNum, c.ulChannel, c.ulWords, c.BuffPtr, c.ulError);
+                    break;
+                case 0x80://wait abandoned;
+                    System.out.println("Error ... Wait abandoned");
+                    break;
+                case 0x102://wait timeout.  object stat is non signaled
+                    System.out.println("Error ... Wait timeout");
+                    break;
+                case 0xFFFFFFFF:// wait failed.  Function failed.  call GetLastError for extended info.
+                    System.out.println("Error ... Wait failed");
+                    break;
+//                default:
+//                    System.out.println("Error ... Interrupt Timeout");
+//                    break;
+            }
+            if("".equals(input))
+                break;
+        } //while (!("".equals(keyboard.nextLine())));
+
+        System.out.println("Cancel Interrupt Notify");
+        lINSTANCE.AO64_66_Cancel_Interrupt_Notify(c.ulBdNum, Event, c.ulError);
+        System.out.println("Disable Interrupt");
+        lINSTANCE.AO64_66_DisableInterrupt(c.ulBdNum, ulValue, c.LOCAL, c.ulError);
+        System.out.println("Disable Clock");
         lINSTANCE.AO64_66_Disable_Clock(c.ulBdNum, c.ulError);
         System.out.println("Closing DMA channel");
-        lINSTANCE.AO64_66_Close_DMA_Channel(c.ulBdNum, channel, c.ulError);
-
-//        DMA_sequence();
-
-//        lINSTANCE.AO64_66_Cancel_Interrupt_Notify(c.ulBdNum, Event, c.ulError);
-//        lINSTANCE.AO64_66_DisableInterrupt(c.ulBdNum, ulValue, c.LOCAL, c.ulError);
-//        lINSTANCE.AO64_66_Disable_Clock(c.ulBdNum, c.ulError);
-//        lINSTANCE.AO64_66_Close_DMA_Channel(c.ulBdNum, c.ulChannel, c.ulError);
-
-//        Kernel32.INSTANCE.CloseHandle(myHandle);
+        lINSTANCE.AO64_66_Close_DMA_Channel(c.ulBdNum, c.ulChannel, c.ulError);
+        System.out.println("Closing Kernel Handle");
+        Kernel32.INSTANCE.CloseHandle(myHandle);
     }
 
 
     public Memory generate_square(){
 
-        Memory tempdata = new Memory(1280);
+        Memory tempdata = new Memory(524288); // 65536 data points * 8 offsets/datapt = 524288 memory allocated
+        NativeLong dataval = new NativeLong();
         // this loop should generate a 24.4 Hz square wave on 16 channels
         // 100000 / (65536/16) 100kHz sample rate, 65536 samples, 16 channels
-        for(int loop=0; loop<10; loop++)
+        for(int loop=0; loop<numTimes; loop++)
         {
-            if(loop%64 == 0){
-                System.out.printf("loop val = %s\n", loop);
-            }
 //             ex uses !(loop%2),
 //             which I read as "if loop is divisible by 2, return 0 or False.  ! operator evaluates as True"
 //             Therefore, "if loop is divisible by 2, execute"
@@ -168,38 +189,6 @@ public class AO64_Continuous_Function {
         return tempdata;
 
     } // end of generate_square
-
-//    private void DMA_sequence() {
-//
-//        lINSTANCE.AO64_66_Open_DMA_Channel(c.ulBdNum, c.ulChannel, c.ulError);
-//        lINSTANCE.AO64_66_DMA_Transfer(c.ulBdNum, c.ulChannel, c.ulWords, c.BuffPtr, c.ulError);
-//        lINSTANCE.AO64_66_DMA_Transfer(c.ulBdNum, c.ulChannel, c.ulWords, c.BuffPtr, c.ulError);
-//        lINSTANCE.AO64_66_DMA_Transfer(c.ulBdNum, c.ulChannel, c.ulWords, c.BuffPtr, c.ulError);
-//
-//        //kbflush reads as "while there is a keyboard key in buffer, getch (get it)
-//
-//        lex.AO64_Connect_Outputs();
-//        lINSTANCE.AO64_66_Enable_Clock(c.ulBdNum, c.ulError);
-
-//        do {
-//
-//            // need enum here?  Event Status needs to be a DWORD enum  or switch case won't work.
-//            // example uses switch/case, which must be compile-time evaluable.  Enums might not work here.
-//            EventStatus.setValue(Kernel32.INSTANCE.WaitForSingleObject(myHandle, 3*1000));
-//
-//            switch(EventStatus.intValue())
-//            {
-//                case 0://wait_object_0, object is signaled;
-//                case 0x80://wait abandoned;
-//                case 0x102://wait timeout.  object stat is non signaled
-//                case 0xFFFFFFFF:// wait failed.  Function failed.  call GetLastError for extended info.
-//
-//            }
-//
-//        } while();
-        // no java equiv of kbhit (keyboard hit) so will just use System.in.read()
-
-//    }
 
 
 }
