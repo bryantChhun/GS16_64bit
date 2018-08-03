@@ -28,9 +28,7 @@ public class c {
     public static NativeLong[] ReadValue;
     public static NativeLong[] ulData; // this is an ARRAY of NativeLong.  Some examples have huge numbers of elements (0x20000)
     public static NativeLongByReference BuffPtr, NewBuffPtr;
-    public static NativeLongByReference BuffPtr2;  //assign by allocating memory?
     public static Pointer testptr;
-
 
     // for DMA memory handling
     public static NativeLong LOCAL;
