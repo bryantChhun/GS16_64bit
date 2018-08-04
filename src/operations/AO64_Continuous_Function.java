@@ -50,6 +50,7 @@ public class AO64_Continuous_Function {
         c.BuffPtr = new NativeLongByReference();
         Scanner keyboard = new Scanner(System.in);
         String input;
+        myHandle = new HANDLE();
 
 
         System.out.println("Intializing the board");
@@ -76,7 +77,7 @@ public class AO64_Continuous_Function {
 
         // Generate square data
         System.out.println("generating square, assigning pointers");
-        data = generate_square();
+        data = generate_outputs();
         c.BuffPtr.setPointer(data.share(0));
 
         // creating handlers
@@ -89,7 +90,10 @@ public class AO64_Continuous_Function {
 
         // Store event handle
         // hEvent is a U64 object, to which we assign a pointer to the handle.
-        Event.hEvent.setPointer(myHandle.getPointer());
+        Event.hEvent.setPointer(myHandle.getPointer().share(0,16));
+        //Event.hEvent = myHandle;
+        //vent.hEvent = myHandle.getPointer().getLong(0);
+
         // enable local interrupt (not DMA)
         c.LOCAL = new NativeLong(); c.LOCAL.setValue(0);
         // monitor interrupt=4, Buffer threshold flag High-to-Low transition.
@@ -110,32 +114,33 @@ public class AO64_Continuous_Function {
         lex.AO64_Connect_Outputs();
         lINSTANCE.AO64_66_Enable_Clock(c.ulBdNum, c.ulError);
 
-        while(true) {
+        do {
             input = keyboard.nextLine();
 
             EventStatus.setValue(Kernel32.INSTANCE.WaitForSingleObject(myHandle, 3*1000));
             switch(EventStatus.intValue())
             {
                 case 0://wait_object_0, object is signaled;
+                    System.out.print("object signaled ... writing to outputs");
                     lINSTANCE.AO64_66_DMA_Transfer(c.ulBdNum, c.ulChannel, c.ulWords, c.BuffPtr, c.ulError);
                     lINSTANCE.AO64_66_DMA_Transfer(c.ulBdNum, c.ulChannel, c.ulWords, c.BuffPtr, c.ulError);
                     break;
                 case 0x80://wait abandoned;
-                    System.out.println("Error ... Wait abandoned");
+                    System.out.print("Error ... Wait abandoned");
                     break;
                 case 0x102://wait timeout.  object stat is non signaled
-                    System.out.println("Error ... Wait timeout");
+                    System.out.print("Error ... Wait timeout");
                     break;
                 case 0xFFFFFFFF:// wait failed.  Function failed.  call GetLastError for extended info.
-                    System.out.println("Error ... Wait failed");
+                    System.out.print("Error ... Wait failed");
                     break;
 //                default:
 //                    System.out.println("Error ... Interrupt Timeout");
 //                    break;
             }
-            if("".equals(input))
-                break;
-        } //while (!("".equals(keyboard.nextLine())));
+//            if("".equals(input))
+//                break;
+        } while (!("".equals(keyboard.nextLine())));
 
         System.out.println("Cancel Interrupt Notify");
         lINSTANCE.AO64_66_Cancel_Interrupt_Notify(c.ulBdNum, Event, c.ulError);
@@ -150,7 +155,7 @@ public class AO64_Continuous_Function {
     }
 
 
-    public Memory generate_square(){
+    public Memory generate_outputs(){
 
         Memory tempdata = new Memory(524288); // 65536 data points * 8 offsets/datapt = 524288 memory allocated
         NativeLong dataval = new NativeLong();
