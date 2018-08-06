@@ -17,6 +17,11 @@ File Structure:
 - "operations" has an individual class file for each of the example tests provided by General Standards
 - "scripts" contains several main methods, some for testing specific modules and one ("main", which calls "example") for executing the examples in "operations" folder.
 
+How to run:
+- not runnable outside IDE yet.
+- can compile and run scripts within IDE.
+(will do gradle build soon)
+
 TODO:
 test if changing binding for "write_local_32" from NativeLong to Int reproduces all outputs.
 - this could be useful as the binding itself defaults to int for these Instance values.
