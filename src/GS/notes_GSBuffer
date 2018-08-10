@@ -1,0 +1,65 @@
+GSBuffer class
+
+imports coremem
+
+/**
+*   GS DAQ takes only 32-bit "nativelong"  No other memory type is produces by this class
+*   Because data is written as two's complement, the only java type that makes sense is "int"
+*
+**/
+constructor(gsseq, num_tp, num_chan)
+    USE CONTIGUOUS BUFFER ONLY
+    builds coremem
+    assigns amount of memory needed to write this block of data
+    checks for total size == we know capacity of buffer is 256k "output values"
+        TotalSize = timepoints*channels is only true if we write all channels for every timepoint.
+            This means we will OVER allocate memory in most cases.
+    assign fields
+    // do we need to hard code the type of memory?  JNA will accept only nativelong = java Int
+
+
+// fields
+memory_dataType
+    hard coded to int for now
+    do not allow allocation of different types of data
+memory_size //defined in constructor upfront
+number_TP_total //incremented value based on "appendvalue"
+num_channels_total //defined in constructor upfront
+
+
+//primary functions
+append_value(long val, val chan)
+    need to store a channel incrementor.  Channels must populate in ascending order
+    moves to endofvalue and writes val/chan
+append end_of_timepoint()
+    use
+append end_of_buffer()
+
+
+// getter/setter
+get_channels()
+    returns all channels that are assigned by this memory block
+get_number_of_tp()
+    returns current total number of tp written to buffer
+?get_coremem_buffer()
+    returns coremem buffer in its current state (?)
+get_timepoint()
+    returns all values for given timepoint
+get_lastValue()
+    returns only last value
+get_size()
+    returns allocated coremem size
+get_int()
+    returns value defined by offset // offset in bytes
+get_intAligned()
+    returns value defined by offset // offset in int (32 bits)
+
+get_num_Channels_at_TP()
+    returns all channels active at specified timepoint
+get_values_at_TP()
+    returns all channel-value pairs at specified timepoint
+
+set_value_at_position()
+    allows in-place adjustment of a tp/channel/voltage
+
+hasRemainingInt // returns true if there are enough bytes to read a single int

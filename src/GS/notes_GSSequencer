@@ -1,0 +1,20 @@
+GSSequencer class
+
+constructor(GSbuffer)
+    assign to local buffer reference?
+    assign handles for monitoring?
+        output empty
+        thresh flag low to high?
+        thresh flag high to low?
+
+
+play(list bufferin)
+    stack bufferStack = new stack(arraylist bufferin)
+    fill buffers
+        call WRITE_TO_DMA
+    start clock
+        call ENABLE_CLOCK
+    while (bufferStack not empty)
+        if DMA below threshold
+            send next buffer stack
+            sleep
