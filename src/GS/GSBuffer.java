@@ -1,10 +1,10 @@
 package GS;
 
+import java.nio.Buffer;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.TreeSet;
 import java.util.HashMap;
-import java.util.TreeMap;
 import java.util.Collections;
 import coremem.buffers.ContiguousBuffer;
 import constants.c;
@@ -24,6 +24,8 @@ import constants.c;
  * Rules:
  * 1) can write exactly one value to exactly one channel per timepoint
  * 2) channels must be written in incremental order per timepoint
+ * 3) eog = "end of group" = "end of timepoint"
+ * 4) eog must be written before "end of function" flag is placed
  */
 public class GSBuffer {
 
@@ -44,31 +46,48 @@ public class GSBuffer {
         tpsWritten = 0;
         valsWritten = 0;
         int maxSizeInBytes = maxTP * maxChan * 4; //using 32 bit
-        if (maxSizeInBytes / 4 >= 256000) {
-            throw new BufferTooLargeException("Buffer too large for card");
+        // Buffer has capacity of 256k VALUES
+        if ((maxSizeInBytes / 4) >= 256000) {
+            throw new BufferTooLargeException("Requested buffer too large.  Reduce tps or num chans");
+        } else if ((maxSizeInBytes / 4) >= 192000 && (maxSizeInBytes / 4) < 256000) {
+            throw new BufferTooLargeException("Warning: Requested buffer > 3/4 max capacity");
         } else {
             buffer = ContiguousBuffer.allocate(maxSizeInBytes);
         }
-
         chansWritten = new HashSet<Integer>();
         activeChans = new HashSet<Integer>();
         TPtoPosMap = new HashMap<Integer, Integer>();
         TPtoPosMap.put(0,0);
     }
 
+    /**
+     * Method to convert voltage into 16bit value for DAC card.
+     * @param voltage float ranging from -1 to 1
+     * @return scaled voltage recast as short
+     * @throws VoltageRangeException
+     */
     private static int voltageToInt(float voltage) throws VoltageRangeException
     {
+        short scaledVoltage;
         if(voltage < -1 || voltage > 1){
             throw new VoltageRangeException("float voltage is out of range");
-        } else{
-            return (int)voltage;
+        } else if (voltage<0)
+        {
+            scaledVoltage = (short)(voltage*32768);
+        } else if (voltage>0)
+        {
+            scaledVoltage = (short)(voltage*32767);
+        } else
+        {
+            scaledVoltage = (short)voltage;
         }
+        return scaledVoltage;
     }
 
     /**
      * Add a value/chan to the end of the memory.  MUST add only to end.  MUST increment channel.
-     * @param voltage
-     * @param chan
+     * @param voltage float from -1 to 1
+     * @param chan integer
      * @throws ActiveChanException
      */
     public void appendValue(float voltage, int chan) throws ActiveChanException
@@ -82,6 +101,11 @@ public class GSBuffer {
             ActiveChanException e = new ActiveChanException(
                     "Channel already active for current timepoint.  Replace or change Channel.");
             throw e;
+        } else if(chan < 0 || chan >=64){
+            ActiveChanException e = new ActiveChanException(
+                    "Channel must be between 0 and 64"
+            );
+            throw e;
         } else
         {
             activeChans.add(chan);
@@ -89,56 +113,105 @@ public class GSBuffer {
         }
 
         int value;
-        // register beginning memory position of this value on the stack
-        // this enables the stack to represent value positions in the buffer
-        buffer.pushPosition();
         try {value = voltageToInt(voltage);} catch (VoltageRangeException ex) {value = 0;}
         int writevalue = (chan << c.id_off.intValue() | value);
         buffer.writeInt(writevalue);
+        // push endpoint to stack
+        buffer.pushPosition();
         valsWritten += 1;
     }
 
-    public void appendEndofTP()
+    /**
+     * adds an "end of group" flag to the most recent value written
+     */
+    public void appendEndofTP() throws FlagException
     {
-        // we want to move to beginning of last value without removing from stack
+        // move to beginning of last value
+        buffer.popPosition();
         buffer.popPosition();
         buffer.pushPosition();
+
         int value = buffer.readInt();
-        int newvalue = (1 << c.eof.intValue() | value);
-        // this writeint replaces the old new value, so we do not increment valsWritten
+        if (value >> c.eog.intValue() == 1){
+            FlagException e = new FlagException("end of timepoint flag already exists!");
+            throw e;
+        }
+        int newvalue = (1 << c.eog.intValue() | value);
+
+        // do not use 'appendValue'
         buffer.writeInt(newvalue);
+        buffer.pushPosition();
+
+        // marks end of TP.  Register next TP in hashmap
         tpsWritten += 1;
-        // marks end of TP.  Next TP registered in hashmap
         TPtoPosMap.put(tpsWritten, 4*valsWritten);
         activeChans.clear();
     }
 
-    public void appendEndofBuffer()
+    /**
+     * adds an "end of function" flag to the most recent value written
+     */
+    public void appendEndofFunction() throws FlagException
+    {
+        // move to beginning of last value
+        buffer.popPosition();
+        buffer.popPosition();
+        buffer.pushPosition();
+
+        int value = buffer.readInt();
+        if (value >> c.eog.intValue() != 1) {
+            FlagException e = new FlagException("must tag end of TP before end of buffer");
+            throw e;
+        } else if (value >> c.eof.intValue() == 1) {
+            FlagException e = new FlagException("end of function flag already exists!");
+            throw e;
+        }
+        int newvalue = (1 << c.eof.intValue() | value);
+
+        // do not use 'appendValue'
+        buffer.writeInt(newvalue);
+        buffer.pushPosition();
+    }
+
+    public short getLastValue()
     {
         buffer.popPosition();
         buffer.pushPosition();
         int value = buffer.readInt();
-        int newvalue = (1 << c.eog.intValue() | value);
-        // this writeint replaces the old new value, so we do not increment valsWritten
-        buffer.writeInt(newvalue);
+        return (short)value;
     }
 
-    //getters
+    /**
+     * Get all channels written in this memory block
+     * @return set of channels
+     */
     public TreeSet<Integer> getAllChannels()
     {
         return new TreeSet<>(chansWritten);
     }
 
+    /**
+     * Get all channels written in this time point
+     * @return set of channels
+     */
     public TreeSet<Integer> getActiveChannels()
     {
         return new TreeSet<>(activeChans);
     }
 
+    /**
+     * get total timepoints written
+     * @return
+     */
     public int getNumTP()
     {
         return tpsWritten;
     }
 
+    /**
+     * get total number of values written
+     * @return
+     */
     public int getValsWritten()
     {
         return valsWritten;
@@ -180,25 +253,20 @@ public class GSBuffer {
     }
 
     /**
-     * returns
-     * @return the last channel/value pair
+     * reset stack to beginning and clear it
+     * reset all channel trackers
+     * overwrite memory with zeros
      */
-    public int getLastValue()
-    {
-        buffer.pushPosition();
-        TreeMap<Integer, Integer> sorted = new TreeMap<>(TPtoPosMap);
-        buffer.setPosition(sorted.last())
-        //returns channel/value pair of most recent timepoint
-    }
-
-    //release memory
     public void clearALL()
     {
         buffer.rewind();
         buffer.clearStack();
         chansWritten = new HashSet<Integer>();
+        valsWritten = 0;
+        tpsWritten = 0;
         activeChans = new HashSet<Integer>();
         TPtoPosMap = new HashMap<Integer, Integer>();
+        buffer.fillBytes((byte)0);
     }
 
 

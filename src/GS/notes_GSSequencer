@@ -2,10 +2,14 @@ GSSequencer class
 
 constructor(GSbuffer)
     assign to local buffer reference?
+
+    COPY example, inherit constants
+
     assign handles for monitoring?
         output empty
         thresh flag low to high?
         thresh flag high to low?
+
 
 
 play(list bufferin)
@@ -18,3 +22,5 @@ play(list bufferin)
         if DMA below threshold
             send next buffer stack
             sleep
+
+
