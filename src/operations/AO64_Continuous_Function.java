@@ -5,7 +5,7 @@ import bindings.GS_NOTIFY_OBJECT;
 import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.NativeLongByReference;
-import constants.c;
+import constants.GSConstants;
 import scripts.example;
 import com.sun.jna.NativeLong;
 import com.sun.jna.platform.win32.Kernel32;
@@ -45,23 +45,23 @@ public class AO64_Continuous_Function {
         WAIT_OBJECT_0 = new DWORD(); WAIT_OBJECT_0.setValue(0x00000000);
         WAIT_TIMEOUT = new DWORD(); WAIT_TIMEOUT.setValue(0x00000102);
         WAIT_FAILED = new DWORD(); WAIT_FAILED.setValue(0xFFFFFFFF);
-        c.ulChannel = new NativeLong(); c.ulChannel.setValue(0x01);
-        c.ulWords = new NativeLong(); c.ulWords.setValue(0x10000);
-        c.BuffPtr = new NativeLongByReference();
+        GSConstants.ulChannel = new NativeLong(); GSConstants.ulChannel.setValue(0x01);
+        GSConstants.ulWords = new NativeLong(); GSConstants.ulWords.setValue(0x10000);
+        GSConstants.BuffPtr = new NativeLongByReference();
         Scanner keyboard = new Scanner(System.in);
         String input;
         myHandle = new HANDLE();
 
 
         System.out.println("Intializing the board");
-        lINSTANCE.AO64_66_Initialize(c.ulBdNum, c.ulError);
+        lINSTANCE.AO64_66_Initialize(GSConstants.ulBdNum, GSConstants.ulError);
         System.out.println("Initialization Complete");
 
         System.out.println("Set Sample rate");
-        lINSTANCE.AO64_66_Set_Sample_Rate(c.ulBdNum, 500000.0, c.ulError);
+        lINSTANCE.AO64_66_Set_Sample_Rate(GSConstants.ulBdNum, 500000.0, GSConstants.ulError);
 
         System.out.println("Autocalibrating the board");
-        if(lINSTANCE.AO64_66_Autocal(c.ulBdNum, c.ulError).intValue() != 1)
+        if(lINSTANCE.AO64_66_Autocal(GSConstants.ulBdNum, GSConstants.ulError).intValue() != 1)
         {
             System.out.println("Autocal Failed");
             System.exit(1);
@@ -73,12 +73,12 @@ public class AO64_Continuous_Function {
 
         // buffer threshold
         NativeLong val = new NativeLong(); val.setValue(65536);
-        lINSTANCE.AO64_66_Write_Local32(c.ulBdNum, c.ulError, c.BUFFER_THRSHLD, val);
+        lINSTANCE.AO64_66_Write_Local32(GSConstants.ulBdNum, GSConstants.ulError, GSConstants.BUFFER_THRSHLD, val);
 
         // Generate square data
         System.out.println("generating square, assigning pointers");
         data = generate_outputs();
-        c.BuffPtr.setPointer(data.share(0));
+        GSConstants.BuffPtr.setPointer(data.share(0));
 
         // creating handlers
         myHandle = Kernel32.INSTANCE.CreateEvent(null, false, false, null);
@@ -95,24 +95,24 @@ public class AO64_Continuous_Function {
         //vent.hEvent = myHandle.getPointer().getLong(0);
 
         // enable local interrupt (not DMA)
-        c.LOCAL = new NativeLong(); c.LOCAL.setValue(0);
+        GSConstants.LOCAL = new NativeLong(); GSConstants.LOCAL.setValue(0);
         // monitor interrupt=4, Buffer threshold flag High-to-Low transition.
         NativeLong ulValue = new NativeLong(); ulValue.setValue(0x04);
-        lINSTANCE.AO64_66_EnableInterrupt(c.ulBdNum, ulValue, c.LOCAL, c.ulError);
-        lINSTANCE.AO64_66_Register_Interrupt_Notify(c.ulBdNum, Event, ulValue, c.LOCAL, c.ulError);
+        lINSTANCE.AO64_66_EnableInterrupt(GSConstants.ulBdNum, ulValue, GSConstants.LOCAL, GSConstants.ulError);
+        lINSTANCE.AO64_66_Register_Interrupt_Notify(GSConstants.ulBdNum, Event, ulValue, GSConstants.LOCAL, GSConstants.ulError);
 
         System.out.println("Continuously Writing using interrupts now....");
         System.out.println("Checking data memory allocation = "+((Memory) data).size());
 
-        c.ulChannel = new NativeLong(); c.ulChannel.setValue(0x01);
-        c.ulWords = new NativeLong(); c.ulWords.setValue(0x10000);
-        lINSTANCE.AO64_66_Open_DMA_Channel(c.ulBdNum, c.ulChannel, c.ulError);
-        lINSTANCE.AO64_66_DMA_Transfer(c.ulBdNum, c.ulChannel, c.ulWords, c.BuffPtr, c.ulError);
-        lINSTANCE.AO64_66_DMA_Transfer(c.ulBdNum, c.ulChannel, c.ulWords, c.BuffPtr, c.ulError);
-        lINSTANCE.AO64_66_DMA_Transfer(c.ulBdNum, c.ulChannel, c.ulWords, c.BuffPtr, c.ulError);
+        GSConstants.ulChannel = new NativeLong(); GSConstants.ulChannel.setValue(0x01);
+        GSConstants.ulWords = new NativeLong(); GSConstants.ulWords.setValue(0x10000);
+        lINSTANCE.AO64_66_Open_DMA_Channel(GSConstants.ulBdNum, GSConstants.ulChannel, GSConstants.ulError);
+        lINSTANCE.AO64_66_DMA_Transfer(GSConstants.ulBdNum, GSConstants.ulChannel, GSConstants.ulWords, GSConstants.BuffPtr, GSConstants.ulError);
+        lINSTANCE.AO64_66_DMA_Transfer(GSConstants.ulBdNum, GSConstants.ulChannel, GSConstants.ulWords, GSConstants.BuffPtr, GSConstants.ulError);
+        lINSTANCE.AO64_66_DMA_Transfer(GSConstants.ulBdNum, GSConstants.ulChannel, GSConstants.ulWords, GSConstants.BuffPtr, GSConstants.ulError);
 
         lex.AO64_Connect_Outputs();
-        lINSTANCE.AO64_66_Enable_Clock(c.ulBdNum, c.ulError);
+        lINSTANCE.AO64_66_Enable_Clock(GSConstants.ulBdNum, GSConstants.ulError);
 
         do {
             input = keyboard.nextLine();
@@ -122,8 +122,8 @@ public class AO64_Continuous_Function {
             {
                 case 0://wait_object_0, object is signaled;
                     System.out.print("object signaled ... writing to outputs");
-                    lINSTANCE.AO64_66_DMA_Transfer(c.ulBdNum, c.ulChannel, c.ulWords, c.BuffPtr, c.ulError);
-                    lINSTANCE.AO64_66_DMA_Transfer(c.ulBdNum, c.ulChannel, c.ulWords, c.BuffPtr, c.ulError);
+                    lINSTANCE.AO64_66_DMA_Transfer(GSConstants.ulBdNum, GSConstants.ulChannel, GSConstants.ulWords, GSConstants.BuffPtr, GSConstants.ulError);
+                    lINSTANCE.AO64_66_DMA_Transfer(GSConstants.ulBdNum, GSConstants.ulChannel, GSConstants.ulWords, GSConstants.BuffPtr, GSConstants.ulError);
                     break;
                 case 0x80://wait abandoned;
                     System.out.print("Error ... Wait abandoned");
@@ -143,13 +143,13 @@ public class AO64_Continuous_Function {
         } while (!("".equals(keyboard.nextLine())));
 
         System.out.println("Cancel Interrupt Notify");
-        lINSTANCE.AO64_66_Cancel_Interrupt_Notify(c.ulBdNum, Event, c.ulError);
+        lINSTANCE.AO64_66_Cancel_Interrupt_Notify(GSConstants.ulBdNum, Event, GSConstants.ulError);
         System.out.println("Disable Interrupt");
-        lINSTANCE.AO64_66_DisableInterrupt(c.ulBdNum, ulValue, c.LOCAL, c.ulError);
+        lINSTANCE.AO64_66_DisableInterrupt(GSConstants.ulBdNum, ulValue, GSConstants.LOCAL, GSConstants.ulError);
         System.out.println("Disable Clock");
-        lINSTANCE.AO64_66_Disable_Clock(c.ulBdNum, c.ulError);
+        lINSTANCE.AO64_66_Disable_Clock(GSConstants.ulBdNum, GSConstants.ulError);
         System.out.println("Closing DMA channel");
-        lINSTANCE.AO64_66_Close_DMA_Channel(c.ulBdNum, c.ulChannel, c.ulError);
+        lINSTANCE.AO64_66_Close_DMA_Channel(GSConstants.ulBdNum, GSConstants.ulChannel, GSConstants.ulError);
         System.out.println("Closing Kernel Handle");
         Kernel32.INSTANCE.CloseHandle(myHandle);
     }
@@ -170,19 +170,19 @@ public class AO64_Continuous_Function {
 
                 // assign all 16 channels
                 for (int i = 0; i < 16; i++) {
-                    dataval.setValue( ((i << c.id_off.intValue()) | 0x4000 ) );
+                    dataval.setValue( ((i << GSConstants.id_off.intValue()) | 0x4000 ) );
                     tempdata.setNativeLong(16*loop*8 + i*8, dataval);
                 }
                 // eog tag is appended to last dataframe, i=15
-                dataval.setValue( (15 << c.id_off.intValue()) | 0x4000 | (1 << c.eog.intValue()));
+                dataval.setValue( (15 << GSConstants.id_off.intValue()) | 0x4000 | (1 << GSConstants.eog.intValue()));
                 tempdata.setNativeLong(16*loop*8 + 15*8, dataval);
             } else {
                 for (int i = 0; i < 16; i++) {
-                    dataval.setValue( (i << c.id_off.intValue()) | 0xC000 );
+                    dataval.setValue( (i << GSConstants.id_off.intValue()) | 0xC000 );
                     tempdata.setNativeLong(16*loop*8 + i*8, dataval);
                 }
                 // eog tag is appended to last dataframe, i=15
-                dataval.setValue( (15 << c.id_off.intValue()) | 0xC000 | (1 << c.eog.intValue()));
+                dataval.setValue( (15 << GSConstants.id_off.intValue()) | 0xC000 | (1 << GSConstants.eog.intValue()));
                 tempdata.setNativeLong(16*loop*8 + 15*8, dataval);
             }
         } // end for loop

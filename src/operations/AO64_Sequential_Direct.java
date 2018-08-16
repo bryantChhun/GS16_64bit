@@ -2,7 +2,7 @@ package operations;
 
 import bindings.AO64_64b_Driver_CLibrary;
 import com.sun.jna.NativeLong;
-import constants.c;
+import constants.GSConstants;
 import scripts.example;
 
 /**
@@ -21,11 +21,11 @@ public class AO64_Sequential_Direct {
         System.out.println("\nSequential direct outputs :");
 
         System.out.println("Intializing the board");
-        lINSTANCE.AO64_66_Initialize(c.ulBdNum, c.ulError);
+        lINSTANCE.AO64_66_Initialize(GSConstants.ulBdNum, GSConstants.ulError);
         System.out.println("Initialization Complete");
 
         System.out.println("Autocalibrating the board");
-        if(lINSTANCE.AO64_66_Autocal(c.ulBdNum, c.ulError).intValue() != 1)
+        if(lINSTANCE.AO64_66_Autocal(GSConstants.ulBdNum, GSConstants.ulError).intValue() != 1)
         {
             System.out.println("Autocal Failed");
             System.exit(1);
@@ -45,7 +45,7 @@ public class AO64_Sequential_Direct {
         NativeLong val = new NativeLong();
 
         // enable clock
-        lINSTANCE.AO64_66_Enable_Clock(c.ulBdNum, c.ulError);
+        lINSTANCE.AO64_66_Enable_Clock(GSConstants.ulBdNum, GSConstants.ulError);
 
         // connect to all outputs
         lex.AO64_Connect_Outputs();
@@ -53,9 +53,9 @@ public class AO64_Sequential_Direct {
         try { System.in.read(); } catch (Exception ex) { System.out.println(ex); }
 
         // write buffer
-        for(int i=0; i < c.numChan.intValue(); i++){
-            val.setValue( (i << c.id_off.intValue()) | (1 << c.eog.intValue()) | 0xC000 );
-            lINSTANCE.AO64_66_Write_Local32(c.ulBdNum, c.ulError, c.OUTPUT_DATA_BUFFER, val);
+        for(int i = 0; i < GSConstants.numChan.intValue(); i++){
+            val.setValue( (i << GSConstants.id_off.intValue()) | (1 << GSConstants.eog.intValue()) | 0xC000 );
+            lINSTANCE.AO64_66_Write_Local32(GSConstants.ulBdNum, GSConstants.ulError, GSConstants.OUTPUT_DATA_BUFFER, val);
             System.out.println(String.format("Please verify that Chan %02d is now at Half PFS...", i));
             try { System.in.read(); } catch (Exception ex) { System.out.println(ex); }
         }
@@ -63,7 +63,7 @@ public class AO64_Sequential_Direct {
         lex.reset_output_to_zero();
 
         // disable clock
-        lINSTANCE.AO64_66_Disable_Clock(c.ulBdNum, c.ulError);
+        lINSTANCE.AO64_66_Disable_Clock(GSConstants.ulBdNum, GSConstants.ulError);
 
     }
 }

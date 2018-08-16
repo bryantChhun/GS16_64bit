@@ -1,6 +1,6 @@
 package GS;
 
-public class ActiveChanException extends Throwable{
+public class ActiveChanException extends Exception{
 
     public ActiveChanException(String pString)
     {

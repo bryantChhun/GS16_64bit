@@ -1,13 +1,13 @@
 package GS;
 
-import java.nio.Buffer;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.TreeSet;
 import java.util.HashMap;
 import java.util.Collections;
+
+import constants.GSConstants;
 import coremem.buffers.ContiguousBuffer;
-import constants.c;
 
 /**
  * Build a buffer to pass to GS-DAQ card via JNA interface
@@ -36,13 +36,18 @@ public class GSBuffer {
     private HashMap<Integer, Integer> TPtoPosMap;
     private int tpsWritten;
     private int valsWritten;
+    private int writevalue;
+    private short svalue;
+
+    private GSConstants c;
 
     /**
      *
      * @param maxTP number of timepoints addressed
      * @param maxChan: maximum number of channels that will be addressed
      */
-    GSBuffer(int maxTP, int maxChan) throws BufferTooLargeException {
+    public GSBuffer(GSConstants pconstants, int maxTP, int maxChan) throws BufferTooLargeException {
+        c = pconstants;
         tpsWritten = 0;
         valsWritten = 0;
         int maxSizeInBytes = maxTP * maxChan * 4; //using 32 bit
@@ -54,19 +59,22 @@ public class GSBuffer {
         } else {
             buffer = ContiguousBuffer.allocate(maxSizeInBytes);
         }
+        buffer.pushPosition();
         chansWritten = new HashSet<Integer>();
         activeChans = new HashSet<Integer>();
+        activeChans.add(-1);
         TPtoPosMap = new HashMap<Integer, Integer>();
         TPtoPosMap.put(0,0);
     }
 
     /**
      * Method to convert voltage into 16bit value for DAC card.
+     * Scale limits are based on 2's complement
      * @param voltage float ranging from -1 to 1
-     * @return scaled voltage recast as short
+     * @return scaled voltage recast as short.
      * @throws VoltageRangeException
      */
-    private static int voltageToInt(float voltage) throws VoltageRangeException
+    public static int voltageToInt(float voltage) throws VoltageRangeException
     {
         short scaledVoltage;
         if(voltage < -1 || voltage > 1){
@@ -90,9 +98,9 @@ public class GSBuffer {
      * @param chan integer
      * @throws ActiveChanException
      */
-    public void appendValue(float voltage, int chan) throws ActiveChanException
+    public void appendValue(double voltage, int chan) throws ActiveChanException, VoltageRangeException
     {
-        if(Collections.max(activeChans) > chan) {
+        if( (Collections.max(activeChans) > chan) ) {
             ActiveChanException e = new ActiveChanException(
                     "Higher channel exists.  Must write in increasing channel order");
             throw e;
@@ -112,13 +120,18 @@ public class GSBuffer {
             chansWritten.add(chan);
         }
 
-        int value;
-        try {value = voltageToInt(voltage);} catch (VoltageRangeException ex) {value = 0;}
-        int writevalue = (chan << c.id_off.intValue() | value);
+        //short value;
+        try {svalue = (short)voltageToInt((float)voltage);} catch (VoltageRangeException ex) {throw ex;}
+        System.out.println("svalue = "+svalue);
+        writevalue = (chan << c.id_off.intValue() | svalue);
+        System.out.println("writevalue = "+writevalue);
         buffer.writeInt(writevalue);
+        System.out.println("wrote to buffer");
         // push endpoint to stack
         buffer.pushPosition();
+        System.out.println("pushed position");
         valsWritten += 1;
+        System.out.println("finished append value");
     }
 
     /**
@@ -162,11 +175,11 @@ public class GSBuffer {
         if (value >> c.eog.intValue() != 1) {
             FlagException e = new FlagException("must tag end of TP before end of buffer");
             throw e;
-        } else if (value >> c.eof.intValue() == 1) {
+        } else if (value >> c.eog.intValue() == 1) {
             FlagException e = new FlagException("end of function flag already exists!");
             throw e;
         }
-        int newvalue = (1 << c.eof.intValue() | value);
+        int newvalue = (1 << c.eog.intValue() | value);
 
         // do not use 'appendValue'
         buffer.writeInt(newvalue);
@@ -176,8 +189,10 @@ public class GSBuffer {
     public short getLastValue()
     {
         buffer.popPosition();
+        buffer.popPosition();
         buffer.pushPosition();
         int value = buffer.readInt();
+        buffer.pushPosition();
         return (short)value;
     }
 

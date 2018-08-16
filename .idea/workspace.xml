@@ -2,14 +2,21 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f876f6e5-7942-4946-8bcd-aa9291a6b6e6" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/src/GS/ActiveChanException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/GS/FlagException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/GS/GSBufferTests.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/scripts/datatypeTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/scripts/gsbufferTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GS16_testapp_64bit.iml" beforeDir="false" afterPath="$PROJECT_DIR$/GS16_testapp_64bit.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/GS/ActiveChanException.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GS/ActiveChanException.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/GS/GSBuffer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GS/GSBuffer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/GS/notes_GSSequencer" beforeDir="false" afterPath="$PROJECT_DIR$/src/GS/notes_GSSequencer" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/GS/GSBufferTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GS/GSBufferTests.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/GS/VoltageRangeException.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GS/VoltageRangeException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/constants/c.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/constants/GSConstants.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/operations/AO64_Basic_output_test.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/operations/AO64_Basic_output_test.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/operations/AO64_Continuous_Function.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/operations/AO64_Continuous_Function.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/operations/AO64_Init_test.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/operations/AO64_Init_test.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/operations/AO64_Sequential_Direct.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/operations/AO64_Sequential_Direct.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/operations/AO64_Simultaneous_Direct.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/operations/AO64_Simultaneous_Direct.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/scripts/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/scripts/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/scripts/datatypeTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/scripts/datatypeTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/scripts/example.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/scripts/example.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -25,78 +32,63 @@
     </SUITE>
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.4932845">
-      <split-first>
-        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="GSBufferTests.java" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/src/GS/GSBufferTests.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="478">
-                  <caret line="50" column="42" lean-forward="true" selection-start-line="50" selection-start-column="42" selection-end-line="50" selection-end-column="42" />
-                  <folding>
-                    <element signature="imports" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="GSSequencer.java" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/GS/GSSequencer.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="75">
-                  <caret line="5" lean-forward="true" selection-start-line="5" selection-end-line="5" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="notes_GSSequencer" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/GS/notes_GSSequencer">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="345">
-                  <caret line="23" column="17" lean-forward="true" selection-start-line="23" selection-start-column="17" selection-end-line="23" selection-end-column="17" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="c.java" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/constants/c.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="210">
-                  <caret line="19" column="61" selection-start-line="19" selection-start-column="61" selection-end-line="19" selection-end-column="61" />
-                  <folding>
-                    <element signature="imports" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-        </leaf>
-      </split-first>
-      <split-second>
-        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="GSBuffer.java" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/src/GS/GSBuffer.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="366">
-                  <caret line="108" column="14" lean-forward="true" selection-start-line="108" selection-start-column="14" selection-end-line="108" selection-end-column="14" />
-                  <folding>
-                    <element signature="imports" expanded="true" />
-                    <element signature="e#5793#5794#0" expanded="true" />
-                    <element signature="e#5843#5844#0" expanded="true" />
-                    <element signature="e#5996#5997#0" expanded="true" />
-                    <element signature="e#6045#6046#0" expanded="true" />
-                    <element signature="e#6145#6146#0" expanded="true" />
-                    <element signature="e#6178#6179#0" expanded="true" />
-                    <element signature="e#6290#6291#0" expanded="true" />
-                    <element signature="e#6324#6325#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-        </leaf>
-      </split-second>
-    </splitter>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="GSBufferTests.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/GS/GSBufferTests.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="379">
+              <caret line="149" column="4" lean-forward="true" selection-start-line="149" selection-start-column="4" selection-end-line="149" selection-end-column="4" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ContiguousBuffer.java" pinned="false" current-in-tab="false">
+        <entry file="jar://$PROJECT_DIR$/../coremem/build/libs/coremem-0.4.5-sources.jar!/coremem/buffers/ContiguousBuffer.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="138">
+              <caret line="147" selection-start-line="147" selection-end-line="147" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#3856#3857#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="GSConstants.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/constants/GSConstants.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="645">
+              <caret line="43" column="31" selection-start-line="43" selection-start-column="31" selection-end-line="43" selection-end-column="31" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AO64_Basic_output_test.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/operations/AO64_Basic_output_test.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="342">
+              <caret line="29" column="29" selection-start-line="29" selection-start-column="29" selection-end-line="29" selection-end-column="29" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AO64_Init_test.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/operations/AO64_Init_test.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="579">
+              <caret line="42" lean-forward="true" selection-start-line="42" selection-end-line="42" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -107,15 +99,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>Get_handle</find>
-      <find>BCR</find>
-      <find>Read_BCR</find>
-      <find>autocal</find>
-      <find>bu</find>
-      <find>close</find>
-      <find>buffer</find>
-      <find>FW_REV</find>
-      <find>OUTPUT_</find>
       <find>ulError</find>
       <find>valueRead</find>
       <find>EventStatus</find>
@@ -137,10 +120,26 @@
       <find>firstInvalid</find>
       <find>rem</find>
       <find>readint</find>
+      <find>idoff</find>
+      <find>offset</find>
+      <find>c.</find>
+      <find>GSBuffer(GSconst,</find>
+      <find>temp_eog</find>
+      <find>temp_eof</find>
+      <find>GSBuffer(</find>
+      <find>appendValue</find>
+      <find>getLastValue</find>
     </findStrings>
     <replaceStrings>
       <replace>c.ulBdNum</replace>
       <replace>c.ulError</replace>
+      <replace>temp_id_off</replace>
+      <replace>temp_eof</replace>
+      <replace>temp_eog</replace>
+      <replace>GSBuffer(</replace>
+      <replace>c.id_off.intValue()</replace>
+      <replace>c.eog.intValue()</replace>
+      <replace>GSBuffer( constants,</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -176,25 +175,27 @@
         <option value="$PROJECT_DIR$/src/operations/AO64_Simultaneous_Direct.java" />
         <option value="$PROJECT_DIR$/src/scripts/Main.java" />
         <option value="$PROJECT_DIR$/src/scripts/MemoryWriteTest.java" />
-        <option value="$PROJECT_DIR$/src/constants/c.java" />
         <option value="$PROJECT_DIR$/src/operations/AO64_Continuous_Function.java" />
         <option value="$PROJECT_DIR$/src/GS/notes" />
         <option value="$PROJECT_DIR$/src/GS/BufferTooLarge.java" />
         <option value="$PROJECT_DIR$/src/GS/BufferTooLargeException.java" />
         <option value="$PROJECT_DIR$/src/GS/notes_GSBuffer" />
-        <option value="$PROJECT_DIR$/src/GS/VoltageRangeException.java" />
-        <option value="$PROJECT_DIR$/src/GS/ActiveChanException.java" />
         <option value="$PROJECT_DIR$/src/GS/GSSequencer.java" />
-        <option value="$PROJECT_DIR$/src/scripts/datatypeTest.java" />
         <option value="$PROJECT_DIR$/src/GS/notes_GSSequencer" />
         <option value="$PROJECT_DIR$/src/GS/EOFwithoutEOGException.java" />
         <option value="$PROJECT_DIR$/src/GS/FlagException.java" />
+        <option value="$PROJECT_DIR$/src/scripts/datatypeTest.java" />
+        <option value="$PROJECT_DIR$/src/GS/ActiveChanException.java" />
+        <option value="$PROJECT_DIR$/src/GS/VoltageRangeException.java" />
+        <option value="$PROJECT_DIR$/src/constants/c.java" />
+        <option value="$PROJECT_DIR$/src/scripts/gsbufferTest.java" />
+        <option value="$PROJECT_DIR$/src/constants/GSConstants.java" />
         <option value="$PROJECT_DIR$/src/GS/GSBuffer.java" />
         <option value="$PROJECT_DIR$/src/GS/GSBufferTests.java" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" fullScreen="true">
+  <component name="ProjectFrameBounds" extendedState="6" fullScreen="true">
     <option name="y" value="-1080" />
     <option name="width" value="1920" />
     <option name="height" value="1080" />
@@ -222,7 +223,35 @@
               <item name="GS16_64bit" type="b2602c69:ProjectViewProjectNode" />
               <item name="GS16_64bit" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="bindings" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="GS16_64bit" type="b2602c69:ProjectViewProjectNode" />
+              <item name="GS16_64bit" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="constants" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="GS16_64bit" type="b2602c69:ProjectViewProjectNode" />
+              <item name="GS16_64bit" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="GS" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="GS16_64bit" type="b2602c69:ProjectViewProjectNode" />
+              <item name="GS16_64bit" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="operations" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="GS16_64bit" type="b2602c69:ProjectViewProjectNode" />
+              <item name="GS16_64bit" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="scripts" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="GS16_64bit" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
             </path>
           </expand>
           <select />
@@ -269,20 +298,9 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.datatypeTest">
+  <component name="RunManager" selected="JUnit.GSBufferTests">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="scripts.Main" />
-      <module name="GS16_testapp_64bit" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="scripts.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-    </configuration>
-    <configuration name="MemoryWriteTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="scripts.MemoryWriteTest" />
       <module name="GS16_testapp_64bit" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <extension name="coverage">
@@ -305,6 +323,63 @@
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
+    </configuration>
+    <configuration name="gsbufferTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="scripts.gsbufferTest" />
+      <module name="GS16_testapp_64bit" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="scripts.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+    </configuration>
+    <configuration name="GSBufferTests" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="GS16_testapp_64bit" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="GS.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="GS" />
+      <option name="MAIN_CLASS_NAME" value="GS.GSBufferTests" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="%MODULE_WORKING_DIR%" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <patterns />
+    </configuration>
+    <configuration name="GSBufferTests.testBufferMaxSize" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="GS16_testapp_64bit" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="GS.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="GS" />
+      <option name="MAIN_CLASS_NAME" value="GS.GSBufferTests" />
+      <option name="METHOD_NAME" value="testBufferMaxSize" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="%MODULE_WORKING_DIR%" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <patterns />
     </configuration>
     <configuration default="true" type="JUnit" factoryName="JUnit">
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -346,14 +421,18 @@
     </configuration>
     <list>
       <item itemvalue="Application.Main" />
-      <item itemvalue="Application.MemoryWriteTest" />
       <item itemvalue="Application.datatypeTest" />
+      <item itemvalue="JUnit.GSBufferTests" />
+      <item itemvalue="Application.gsbufferTest" />
+      <item itemvalue="JUnit.GSBufferTests.testBufferMaxSize" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.GSBufferTests" />
+        <item itemvalue="Application.gsbufferTest" />
+        <item itemvalue="JUnit.GSBufferTests.testBufferMaxSize" />
         <item itemvalue="Application.datatypeTest" />
         <item itemvalue="Application.Main" />
-        <item itemvalue="Application.MemoryWriteTest" />
       </list>
     </recent_temporary>
   </component>
@@ -487,26 +566,67 @@
       <option name="project" value="LOCAL" />
       <updated>1533960108339</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="updates">
+      <created>1534356409262</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1534356409262</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
+  <component name="TestHistory">
+    <history-entry file="GSBufferTests - 2018.08.15 at 22h 57m 19s.xml">
+      <configuration name="GSBufferTests" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="GSBufferTests - 2018.08.15 at 23h 00m 38s.xml">
+      <configuration name="GSBufferTests" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="GSBufferTests - 2018.08.15 at 23h 01m 32s.xml">
+      <configuration name="GSBufferTests" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="GSBufferTests - 2018.08.15 at 23h 01m 57s.xml">
+      <configuration name="GSBufferTests" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="GSBufferTests - 2018.08.15 at 23h 11m 11s.xml">
+      <configuration name="GSBufferTests" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="GSBufferTests - 2018.08.15 at 23h 13m 32s.xml">
+      <configuration name="GSBufferTests" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="GSBufferTests - 2018.08.15 at 23h 14m 52s.xml">
+      <configuration name="GSBufferTests" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="GSBufferTests - 2018.08.15 at 23h 45m 57s.xml">
+      <configuration name="GSBufferTests" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="GSBufferTests - 2018.08.15 at 23h 50m 17s.xml">
+      <configuration name="GSBufferTests" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="GSBufferTests - 2018.08.16 at 00h 13m 39s.xml">
+      <configuration name="GSBufferTests" configurationId="JUnit" />
+    </history-entry>
+  </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="-1080" width="1920" height="1080" extended-state="0" />
+    <frame x="0" y="-1080" width="1920" height="1080" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info anchor="right" id="Palette" order="3" />
       <window_info anchor="bottom" id="TODO" order="5" />
+      <window_info anchor="bottom" id="Messages" order="6" sideWeight="0.4969475" weight="0.16281512" />
       <window_info anchor="right" id="Palette&#9;" order="4" />
       <window_info id="Image Layers" order="1" />
       <window_info anchor="right" id="Capture Analysis" order="5" />
-      <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" visible="true" weight="0.19857433" />
+      <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.50305253" side_tool="true" visible="true" weight="0.15784115" />
       <window_info anchor="right" id="Maven Projects" order="6" />
-      <window_info id="Run" order="7" weight="0.27955273" />
+      <window_info active="true" id="Run" order="7" visible="true" weight="0.27103302" />
       <window_info anchor="bottom" id="Version Control" order="8" weight="0.2536313" />
-      <window_info anchor="bottom" id="Terminal" order="9" weight="0.26985744" />
+      <window_info anchor="bottom" id="Terminal" order="9" sideWeight="0.49946752" weight="0.26985744" />
       <window_info id="Capture Tool" order="2" />
       <window_info id="Designer" order="3" />
-      <window_info active="true" content_ui="combo" id="Project" order="8" visible="true" weight="0.17358893" />
+      <window_info content_ui="combo" id="Project" order="8" weight="0.17338218" />
+      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.4993895" weight="0.3277311" />
       <window_info id="Learn" order="6" weight="0.32960597" />
       <window_info id="Structure" order="0" side_tool="true" weight="0.24973376" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -517,11 +637,9 @@
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="Coverage" order="8" side_tool="true" weight="0.32995737" />
       <window_info anchor="bottom" id="Inspection" order="4" weight="0.4" />
-      <window_info anchor="bottom" id="Messages" order="6" weight="0.16293278" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Cvs" order="3" weight="0.25" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32849163" />
     </layout>
     <layout-to-restore>
       <window_info anchor="right" id="Palette" order="3" />
@@ -599,7 +717,8 @@
     <MESSAGE value="save" />
     <MESSAGE value="Properly written signal to memory.&#10;assign to bufferptr still not working" />
     <MESSAGE value="Methods for GS-clearcontrol interface" />
-    <option name="LAST_COMMIT_MESSAGE" value="Methods for GS-clearcontrol interface" />
+    <MESSAGE value="updates" />
+    <option name="LAST_COMMIT_MESSAGE" value="updates" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -615,20 +734,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar://$MAVEN_REPOSITORY$/net/java/dev/jna/jna/4.5.1/jna-4.5.1.jar!/com/sun/jna/Pointer.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-51">
-          <caret line="17" column="13" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/bindings/GS_PHYSICAL_MEM.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="201">
-          <caret line="29" column="7" lean-forward="true" selection-start-line="29" selection-start-column="7" selection-end-line="29" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/bindings/GS_DMA_DESCRIPTOR.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-3">
@@ -655,41 +760,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="17">
           <caret line="46" column="24" selection-start-line="46" selection-start-column="24" selection-end-line="46" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/operations/AO64_Basic_output_test.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="390">
-          <caret line="29" column="29" selection-start-line="29" selection-start-column="29" selection-end-line="29" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/operations/AO64_Init_test.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="420">
-          <caret line="30" column="40" selection-start-line="30" selection-start-column="40" selection-end-line="30" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/bindings/AO64_64b_Driver_CLibrary.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="345">
-          <caret line="30" column="56" selection-start-line="30" selection-start-column="56" selection-end-line="30" selection-end-column="56" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/scripts/Main.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="17" column="44" selection-start-line="17" selection-start-column="44" selection-end-line="17" selection-end-column="44" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/scripts/example.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="16" column="2" selection-start-line="16" selection-start-column="2" selection-end-line="16" selection-end-column="2" />
         </state>
       </provider>
     </entry>
@@ -847,44 +917,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/scripts/MemoryWriteTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="795">
-          <caret line="53" column="5" lean-forward="true" selection-start-line="17" selection-start-column="4" selection-end-line="53" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/GS/VoltageRangeException.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="14" column="1" lean-forward="true" selection-start-line="14" selection-start-column="1" selection-end-line="14" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/constants/c.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="19" column="61" selection-start-line="19" selection-start-column="61" selection-end-line="19" selection-end-column="61" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/GS/ActiveChanException.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="7" column="5" lean-forward="true" selection-start-line="7" selection-start-column="5" selection-end-line="7" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/scripts/datatypeTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="7" column="30" selection-start-line="7" selection-start-column="30" selection-end-line="7" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/GS/notes_GSBuffer">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="837">
@@ -903,30 +935,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="120">
           <caret line="9" column="9" selection-start-line="9" selection-start-column="9" selection-end-line="9" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/GS/notes_GSSequencer">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="345">
-          <caret line="23" column="17" lean-forward="true" selection-start-line="23" selection-start-column="17" selection-end-line="23" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/../coremem/build/libs/coremem-0.4.5-sources.jar!/coremem/buffers/ContiguousBuffer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="233">
-          <caret line="449" column="20" selection-start-line="449" selection-start-column="13" selection-end-line="449" selection-end-column="20" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/GS/GSSequencer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" lean-forward="true" selection-start-line="5" selection-end-line="5" />
         </state>
       </provider>
     </entry>
@@ -958,10 +966,94 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/GS/GSBufferTests.java">
+    <entry file="file://$PROJECT_DIR$/src/scripts/MemoryWriteTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="478">
-          <caret line="50" column="42" lean-forward="true" selection-start-line="50" selection-start-column="42" selection-end-line="50" selection-end-column="42" />
+        <state relative-caret-position="255">
+          <caret line="20" column="53" selection-start-line="20" selection-start-column="53" selection-end-line="20" selection-end-column="53" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/GS/VoltageRangeException.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="4" column="25" selection-start-line="4" selection-start-column="25" selection-end-line="4" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/GS/ActiveChanException.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="9" column="65" lean-forward="true" selection-start-line="9" selection-start-column="65" selection-end-line="9" selection-end-column="65" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/junit/jupiter/junit-jupiter-api/5.0.0/junit-jupiter-api-5.0.0.jar!/org/junit/jupiter/api/Assertions.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="249">
+          <caret line="87" selection-start-line="87" selection-end-line="87" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/GS/GSSequencer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" selection-start-line="5" selection-end-line="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/scripts/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1">
+          <caret line="17" column="44" selection-start-line="17" selection-start-column="44" selection-end-line="17" selection-end-column="44" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/GS/notes_GSSequencer">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="345">
+          <caret line="23" column="17" selection-start-line="23" selection-start-column="17" selection-end-line="23" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/bindings/AO64_64b_Driver_CLibrary.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="224">
+          <caret line="32" column="59" selection-start-line="32" selection-start-column="59" selection-end-line="32" selection-end-column="59" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/scripts/example.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="453">
+          <caret line="94" column="41" selection-start-line="94" selection-start-column="41" selection-end-line="94" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/scripts/datatypeTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="45">
+          <caret line="3" column="27" lean-forward="true" selection-start-line="3" selection-start-column="27" selection-end-line="3" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/operations/AO64_Basic_output_test.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="342">
+          <caret line="29" column="29" selection-start-line="29" selection-start-column="29" selection-end-line="29" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/operations/AO64_Init_test.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="579">
+          <caret line="42" lean-forward="true" selection-start-line="42" selection-end-line="42" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/constants/GSConstants.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="645">
+          <caret line="43" column="31" selection-start-line="43" selection-start-column="31" selection-end-line="43" selection-end-column="31" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -970,18 +1062,41 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/GS/GSBuffer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="366">
-          <caret line="108" column="14" lean-forward="true" selection-start-line="108" selection-start-column="14" selection-end-line="108" selection-end-column="14" />
+        <state relative-caret-position="-187">
+          <caret line="102" column="49" selection-start-line="102" selection-start-column="49" selection-end-line="102" selection-end-column="49" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#5793#5794#0" expanded="true" />
-            <element signature="e#5843#5844#0" expanded="true" />
-            <element signature="e#5996#5997#0" expanded="true" />
-            <element signature="e#6045#6046#0" expanded="true" />
-            <element signature="e#6145#6146#0" expanded="true" />
-            <element signature="e#6178#6179#0" expanded="true" />
-            <element signature="e#6290#6291#0" expanded="true" />
-            <element signature="e#6324#6325#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/../coremem/build/libs/coremem-0.4.5-sources.jar!/coremem/buffers/ContiguousBuffer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="138">
+          <caret line="147" selection-start-line="147" selection-end-line="147" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#3856#3857#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/scripts/gsbufferTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="13" lean-forward="true" selection-start-line="13" selection-end-line="13" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/GS/GSBufferTests.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="379">
+          <caret line="149" column="4" lean-forward="true" selection-start-line="149" selection-start-column="4" selection-end-line="149" selection-end-column="4" />
+          <folding>
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>

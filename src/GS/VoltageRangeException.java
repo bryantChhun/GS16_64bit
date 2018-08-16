@@ -1,6 +1,6 @@
 package GS;
 
-public class VoltageRangeException extends Throwable {
+public class VoltageRangeException extends Exception {
 
     public VoltageRangeException(String pString)
     {

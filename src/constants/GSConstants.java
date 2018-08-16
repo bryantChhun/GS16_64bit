@@ -12,9 +12,9 @@ import java.util.List;
  */
 
 /**
- * constants used by the example.c program supplied by General Standards
+ * constants used by the example.GSConstants program supplied by General Standards
  */
-public class c {
+public class GSConstants {
 
     // board parameters
     public static NativeLong ulNumBds, ulBdNum, numChan, id_off, eog, eof, disconnect;
@@ -26,7 +26,7 @@ public class c {
     // input/output values from board
     public static NativeLong ValueRead, ValueRead1;
     public static NativeLong[] ReadValue;
-    public static NativeLong[] ulData; // this is an ARRAY of NativeLong.  Some examples have huge numbers of elements (0x20000)
+    public static NativeLong[] ulData; // this is an ARRAY of NativeLong.
     public static NativeLongByReference BuffPtr, NewBuffPtr;
     public static Pointer testptr;
 
@@ -35,4 +35,13 @@ public class c {
     public static NativeLong ulChannel;
     public static NativeLong ulWords;
 
+    public GSConstants()
+    {
+        id_off = new NativeLong();
+        id_off.setValue(24);
+        eog = new NativeLong();
+        eog.setValue(30);
+        eof = new NativeLong();
+        eof.setValue(31);
+    }
 }
