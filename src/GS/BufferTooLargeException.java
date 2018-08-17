@@ -1,6 +1,6 @@
 package GS;
 
-public class BufferTooLargeException extends Throwable {
+public class BufferTooLargeException extends Exception{
 
     public BufferTooLargeException(String pString)
     {

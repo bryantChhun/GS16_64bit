@@ -17,15 +17,18 @@ import coremem.buffers.ContiguousBuffer;
  *              Channel1, Value1
  *              Channel2, Value2
  *              ...
+ *              ChannelX, ValueY, EOG Flag
  *          Timepoint2
- *              ChannelX, ValueY
+ *              Channel1, Value1
  *              ...
- *
+ *              ChannelX, ValueY, EOG Flag, EOF Flag
+ *      End of Buffer
  * Rules:
  * 1) can write exactly one value to exactly one channel per timepoint
  * 2) channels must be written in incremental order per timepoint
  * 3) eog = "end of group" = "end of timepoint"
- * 4) eog must be written before "end of function" flag is placed
+ * 4) eof = "end of function" = "end of buffer"
+ * 5) eog must be written before "end of function" flag is placed
  */
 public class GSBuffer {
 
@@ -36,8 +39,6 @@ public class GSBuffer {
     private HashMap<Integer, Integer> TPtoPosMap;
     private int tpsWritten;
     private int valsWritten;
-    private int writevalue;
-    private short svalue;
 
     private GSConstants c;
 
@@ -120,18 +121,13 @@ public class GSBuffer {
             chansWritten.add(chan);
         }
 
-        //short value;
-        try {svalue = (short)voltageToInt((float)voltage);} catch (VoltageRangeException ex) {throw ex;}
-        System.out.println("svalue = "+svalue);
-        writevalue = (chan << c.id_off.intValue() | svalue);
-        System.out.println("writevalue = "+writevalue);
+        short value;
+        try {value = (short)voltageToInt((float)voltage);} catch (VoltageRangeException ex) {throw ex;}
+        int writevalue = (chan << c.id_off.intValue() | value);
         buffer.writeInt(writevalue);
-        System.out.println("wrote to buffer");
         // push endpoint to stack
         buffer.pushPosition();
-        System.out.println("pushed position");
         valsWritten += 1;
-        System.out.println("finished append value");
     }
 
     /**
@@ -145,20 +141,24 @@ public class GSBuffer {
         buffer.pushPosition();
 
         int value = buffer.readInt();
+
         if (value >> c.eog.intValue() == 1){
             FlagException e = new FlagException("end of timepoint flag already exists!");
             throw e;
         }
-        int newvalue = (1 << c.eog.intValue() | value);
+        int writevalue = ( (1 << c.eog.intValue()) | value);
 
         // do not use 'appendValue'
-        buffer.writeInt(newvalue);
+        buffer.popPosition();
+        buffer.pushPosition();
+        buffer.writeInt(writevalue);
         buffer.pushPosition();
 
         // marks end of TP.  Register next TP in hashmap
         tpsWritten += 1;
         TPtoPosMap.put(tpsWritten, 4*valsWritten);
         activeChans.clear();
+        activeChans.add(-1);
     }
 
     /**
@@ -172,20 +172,27 @@ public class GSBuffer {
         buffer.pushPosition();
 
         int value = buffer.readInt();
-        if (value >> c.eog.intValue() != 1) {
-            FlagException e = new FlagException("must tag end of TP before end of buffer");
-            throw e;
-        } else if (value >> c.eog.intValue() == 1) {
-            FlagException e = new FlagException("end of function flag already exists!");
-            throw e;
-        }
-        int newvalue = (1 << c.eog.intValue() | value);
+
+//        if (value >> c.eog.intValue() != 1) {
+//            FlagException e = new FlagException("must tag end of TP before end of buffer");
+//            throw e;
+//        } else if (value >> c.eof.intValue() == 1) {
+//            FlagException e = new FlagException("end of function flag already exists!");
+//            throw e;
+//        }
+        int newvalue = (1 << c.eof.intValue() | value);
 
         // do not use 'appendValue'
+        buffer.popPosition();
+        buffer.pushPosition();
         buffer.writeInt(newvalue);
         buffer.pushPosition();
     }
 
+    /**
+     * Retrieve only the short value (16bit) that was most recently written
+     * @return short value
+     */
     public short getLastValue()
     {
         buffer.popPosition();
@@ -194,6 +201,20 @@ public class GSBuffer {
         int value = buffer.readInt();
         buffer.pushPosition();
         return (short)value;
+    }
+
+    /**
+     * Retrieve the entire 32 bit value most recently written
+     * @return int (32bit)
+     */
+    public int getLastBlock()
+    {
+        buffer.popPosition();
+        buffer.popPosition();
+        buffer.pushPosition();
+        int value = buffer.readInt();
+        buffer.pushPosition();
+        return value;
     }
 
     /**
@@ -211,12 +232,14 @@ public class GSBuffer {
      */
     public TreeSet<Integer> getActiveChannels()
     {
-        return new TreeSet<>(activeChans);
+        HashSet<Integer> newset = new HashSet<>(activeChans);
+        newset.remove(-1);
+        return new TreeSet<>(newset);
     }
 
     /**
      * get total timepoints written
-     * @return
+     * @return integer tps written
      */
     public int getNumTP()
     {
@@ -225,7 +248,7 @@ public class GSBuffer {
 
     /**
      * get total number of values written
-     * @return
+     * @return integer number of values
      */
     public int getValsWritten()
     {
@@ -235,22 +258,21 @@ public class GSBuffer {
 
     /**
      * returns hashmap of ALL channels/value pairs at given timepoint
-     * @param timepoint
-     * @return
+     *
+     * push to set endpoint on stack
+     *  retrieve TPtoPosMap(tp) and (tp+1) values
+     *  difference between returned values/4 represents # values written
+     *  go to tp memory position
+     *  loop for number of values and return all channel/value pairs (readint)
+     * pop to return to endpoint on stack
+     *
+     * @param timepoint integer timepoint location to query
+     * @return hashmap with (key, value) = (channel, short(16bit)value)
      */
     public HashMap<Integer, Short> getTPValues(int timepoint)
     {
-        /**
-         * push to set endpoint on stack
-         *  retrieve TPtoPosMap(tp) and (tp+1) values
-         *  difference between returned values/4 represents # values written
-         *  go to tp memory position
-         *  loop for number of values and return all channel/value pairs (readint)
-         * pop to return to endpoint on stack
-         */
-
         HashMap<Integer, Short> ChanValPair= new HashMap<>();
-        int channel, value;
+        int channel, value, eof_eog;
         buffer.pushPosition();
         int tpOffset1 = TPtoPosMap.get(timepoint);
         int tpOffset2 = TPtoPosMap.get(timepoint+1);
@@ -260,7 +282,18 @@ public class GSBuffer {
         {
             value = buffer.readInt();
             channel = (value >> c.id_off.intValue());
-            value &= (channel << c.id_off.intValue());
+            if(value >> c.eof.intValue() == 1)
+            {
+                channel &= ~128;    // turn eof AND eog flag off
+                System.out.println("channel after eof flipped "+channel);
+            }
+            if(value >> c.eog.intValue() == 1)
+            {
+                channel &= 64;     // turn eog flag off
+                System.out.println("channel after eog flipped "+channel);
+            }
+            value &= ~(channel << c.id_off.intValue());
+            System.out.println("hasmap value = "+value);
             ChanValPair.put(channel, (short)value);
         }
         buffer.popPosition();
@@ -276,11 +309,11 @@ public class GSBuffer {
     {
         buffer.rewind();
         buffer.clearStack();
-        chansWritten = new HashSet<Integer>();
+        chansWritten = new HashSet<>();
         valsWritten = 0;
         tpsWritten = 0;
-        activeChans = new HashSet<Integer>();
-        TPtoPosMap = new HashMap<Integer, Integer>();
+        activeChans = new HashSet<>();
+        TPtoPosMap = new HashMap<>();
         buffer.fillBytes((byte)0);
     }
 

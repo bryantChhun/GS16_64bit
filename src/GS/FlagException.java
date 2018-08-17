@@ -1,6 +1,6 @@
 package GS;
 
-public class FlagException extends Throwable {
+public class FlagException extends Exception {
 
     public FlagException(String pString)
     {
