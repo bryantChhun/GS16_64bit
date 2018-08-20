@@ -37,9 +37,6 @@ public class GSBufferTests {
     {
         try {
             buffertest = new GSBuffer( constants, 2000, 64);
-        } catch (Exception ex) {fail(ex);}
-
-        try {
             buffertest.appendValue(-1.0,1);
         } catch (Exception ex) {fail(ex);}
 
@@ -54,9 +51,6 @@ public class GSBufferTests {
     {
         try {
             buffertest = new GSBuffer( constants, 2000, 64);
-        } catch (Exception ex) {fail(ex);}
-
-        try {
             buffertest.appendValue(1.0,1);
         } catch (Exception ex) {fail(ex);}
 
@@ -71,9 +65,6 @@ public class GSBufferTests {
     {
         try {
             buffertest = new GSBuffer( constants, 2000, 64);
-        } catch (Exception ex) {fail(ex);}
-
-        try {
             buffertest.appendValue(0,1);
         } catch (Exception ex) {fail(ex);}
 
@@ -120,6 +111,56 @@ public class GSBufferTests {
 
     @Test
     /**
+     * test positive write values
+     */
+    public void GSBuffer_VoltageToIntConversion_PostiveValues()
+    {
+        try {
+            buffertest = new GSBuffer( constants, 2000, 64);
+        } catch (Exception ex) {fail(ex);}
+
+        try {
+            buffertest.appendValue(0.1,1);
+            assertEquals(3276, buffertest.getLastValue());
+            buffertest.appendValue(0.2, 2);
+            assertEquals(6553, buffertest.getLastValue());
+            buffertest.appendValue(0.3, 3);
+            assertEquals(9830, buffertest.getLastValue());
+            buffertest.appendValue(0.4, 4);
+            assertEquals(13106, buffertest.getLastValue());
+            buffertest.appendValue(0.5, 5);
+            assertEquals(16383, buffertest.getLastValue());
+        } catch(Exception ex) {fail(ex);}
+
+    }
+
+    @Test
+    /**
+     * test negative write values
+     */
+    public void GSBuffer_VoltageToIntConversion_NegativeValues()
+    {
+        try {
+            buffertest = new GSBuffer( constants, 2000, 64);
+        } catch (Exception ex) {fail(ex);}
+
+        try {
+            buffertest.appendValue(-0.1,1);
+            assertEquals(-3276, buffertest.getLastValue());
+            buffertest.appendValue(-0.2, 2);
+            assertEquals(-6553, buffertest.getLastValue());
+            buffertest.appendValue(-0.3, 3);
+            assertEquals(-9830, buffertest.getLastValue());
+            buffertest.appendValue(-0.4, 4);
+            assertEquals(-13107, buffertest.getLastValue());
+            buffertest.appendValue(-0.5, 5);
+            assertEquals(-16384, buffertest.getLastValue());
+        } catch(Exception ex) {fail(ex);}
+
+    }
+
+    @Test
+    /**
      * EOGFlag: test handling of double TP flag write
      * // is this necessary?  double write does nothing anyway...
      */
@@ -127,15 +168,9 @@ public class GSBufferTests {
     {
         try {
             buffertest = new GSBuffer( constants, 2000, 64);
-        } catch (Exception ex) {fail(ex);}
-
-        try {
             buffertest.appendValue(0.5,1);
-        } catch (Exception ex) {fail(ex);}
-
-        try {
             buffertest.appendEndofTP();
-        } catch(FlagException ex) {}
+        } catch (Exception ex) {fail(ex);}
 
         try {
             buffertest.appendEndofTP();
@@ -145,46 +180,73 @@ public class GSBufferTests {
     @Test
     /**
      * EOG flag: test correct placement of TP flag
+     * check both positive and negative EOG flags
      */
     public void GSBuffer_EOG_correctFlag()
     {
         try {
             buffertest = new GSBuffer( constants, 2000, 64);
+            buffertest.appendValue(1,1);
+            buffertest.appendEndofTP();
         } catch (Exception ex) {fail(ex);}
 
-        try {
-            buffertest.appendValue(1,1);
-        } catch(Exception ex) {fail(ex);}
+        assertEquals(1, buffertest.getLastBlock() >>> constants.eog.intValue());
 
         try {
+            buffertest = new GSBuffer( constants, 2000, 64);
+            buffertest.appendValue(-1,1);
             buffertest.appendEndofTP();
-        } catch(FlagException ex) {fail(ex);}
+        } catch (Exception ex) {fail(ex);}
 
-        assertEquals(1, buffertest.getLastBlock() >> constants.eog.intValue());
+        assertEquals(1, buffertest.getLastBlock() >>> constants.eog.intValue());
+
+        try {
+            buffertest = new GSBuffer( constants, 2000, 64);
+            buffertest.appendValue(1,1);
+            buffertest.appendEndofTP();
+            buffertest.appendEndofFunction();
+        } catch (Exception ex) {fail(ex);}
+
+        //unsigned right shift necessary because EOF is most significant bit.
+        assertEquals(3, buffertest.getLastBlock() >>> constants.eog.intValue());
+
+        try {
+            buffertest = new GSBuffer( constants, 2000, 64);
+            buffertest.appendValue(-1,1);
+            buffertest.appendEndofTP();
+            buffertest.appendEndofFunction();
+        } catch (Exception ex) {fail(ex);}
+
+        //unsigned right shift necessary because EOF is most significant bit.
+        assertEquals(3, buffertest.getLastBlock() >>> constants.eog.intValue());
     }
 
     @Test
     /**
      * EOF flag: test correct placement of end of buffer flag
-     * 4 byte int can't hold a number with this tag
-     *  it will return 2's complement.
+     * 4 byte int can't hold a positive number with this tag
+     *  it will ALWAYS return 2's complement
      */
     public void GSBuffer_EOF_correctFlag()
     {
         try {
             buffertest = new GSBuffer( constants, 2000, 64);
-        } catch (Exception ex) {fail(ex);}
-
-        try {
             buffertest.appendValue(1,1);
-        } catch(Exception ex) {fail(ex);}
-
-        try {
             buffertest.appendEndofTP();
             buffertest.appendEndofFunction();
-        } catch(FlagException ex) {fail(ex);}
+        } catch (Exception ex) {fail(ex);}
 
-        assertEquals(1, -1*(buffertest.getLastBlock() >> constants.eof.intValue()) );
+        assertEquals(1, (buffertest.getLastBlock() >>> constants.eof.intValue()) );
+
+        try {
+            buffertest = new GSBuffer( constants, 2000, 64);
+            buffertest.appendValue(-1,1);
+            buffertest.appendEndofTP();
+            buffertest.appendEndofFunction();
+        } catch (Exception ex) {fail(ex);}
+
+        assertEquals(1, (buffertest.getLastBlock() >>> constants.eof.intValue()) );
+
     }
 
     @Test
@@ -195,11 +257,8 @@ public class GSBufferTests {
     {
         try {
             buffertest = new GSBuffer( constants, 2000, 64);
-        } catch (Exception ex) {fail(ex);}
-
-        try {
             buffertest.appendValue(1,1);
-        } catch(Exception ex) {fail(ex);}
+        } catch (Exception ex) {fail(ex);}
 
         try {
             buffertest.appendValue(0,1);
@@ -235,15 +294,9 @@ public class GSBufferTests {
     {
         try {
             buffertest = new GSBuffer( constants, 2000, 64);
-        } catch (Exception ex) {fail(ex);}
-
-        try {
             buffertest.appendValue(1,1);
-        } catch(Exception ex) {fail(ex);}
-
-        try {
             buffertest.appendValue(1,3);
-        } catch(Exception ex) {fail(ex);}
+        } catch (Exception ex) {fail(ex);}
 
         try {
             buffertest.appendValue(1,2);
@@ -260,19 +313,10 @@ public class GSBufferTests {
     {
         try {
             buffertest = new GSBuffer( constants, 2000, 64);
-        } catch (Exception ex) {fail(ex);}
-
-        try {
             buffertest.appendValue(1,1);
-        } catch(Exception ex) {fail(ex);}
-
-        try {
             buffertest.appendValue(1,2);
-        } catch(Exception ex) {fail(ex);}
-
-        try {
             buffertest.appendValue(1,3);
-        } catch(Exception ex) {fail(ex);}
+        } catch (Exception ex) {fail(ex);}
 
         TreeSet<Integer> returnset = new TreeSet<>(buffertest.getActiveChannels());
 
@@ -292,23 +336,28 @@ public class GSBufferTests {
 
         for(int tp=0; tp<1000; tp++)
         {
-            for(double chan=0; chan < 5; chan++)
+            for(int chan=1; chan <= 5; chan++)
             {
-                try{
-                    buffertest.appendValue((chan+1)/5, (int)chan);
-                } catch(Exception ex) {fail(ex);}
+                try {
+                    double voltage = -0.1*chan;
+                    buffertest.appendValue(voltage, chan);
+                } catch (Exception ex) {fail(ex);}
             }
             try{buffertest.appendEndofTP();} catch(Exception ex) {fail(ex);}
         }
-        //try{buffertest.appendEndofFunction();} catch(Exception ex) {fail(ex);}
+        try{buffertest.appendEndofFunction();} catch(Exception ex) {fail(ex);}
 
         HashMap<Integer, Short> tpMap = buffertest.getTPValues(100);
 
-        assertEquals((short)(0.2*32767), (short)tpMap.get(0));
-        assertEquals((short)(0.4*32767), (short)tpMap.get(1));
-        assertEquals((short)(0.6*32767), (short)tpMap.get(2));
-        assertEquals((short)(0.8*32767), (short)tpMap.get(3));
-        assertEquals((short)(1.0*32767), (short)tpMap.get(4));
+        // iterate throuh all values
+//        for (short temp : tpMap){
+//            assertEquals((short)(1), temp);
+//        }
+//        assertEquals((short)(-0.1*32767), (short)tpMap.get(1));
+//        assertEquals((short)(-0.2*32767), (short)tpMap.get(2));
+//        assertEquals((short)(-0.3*32767), (short)tpMap.get(3));
+//        assertEquals((short)(-0.4*32767), (short)tpMap.get(4));
+//        assertEquals((short)(-0.5*32767), (short)tpMap.get(5));
 
     }
 

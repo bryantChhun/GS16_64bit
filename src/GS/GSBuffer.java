@@ -1,10 +1,6 @@
 package GS;
 
-import java.util.Set;
-import java.util.HashSet;
-import java.util.TreeSet;
-import java.util.HashMap;
-import java.util.Collections;
+import java.util.*;
 
 import constants.GSConstants;
 import coremem.buffers.ContiguousBuffer;
@@ -75,17 +71,19 @@ public class GSBuffer {
      * @return scaled voltage recast as short.
      * @throws VoltageRangeException
      */
-    public static int voltageToInt(float voltage) throws VoltageRangeException
+    private int voltageToInt(float voltage) throws VoltageRangeException
     {
-        short scaledVoltage;
+        int scaledVoltage;
         if(voltage < -1 || voltage > 1){
             throw new VoltageRangeException("float voltage is out of range");
         } else if (voltage<0)
         {
-            scaledVoltage = (short)(voltage*32768);
+            scaledVoltage = (short)( voltage*(Math.pow(2,15)) );
+            // most significant bit is padded when recasting negative short to int.  Must flip all those bits
+            scaledVoltage = scaledVoltage ^ (65535 << 16);
         } else if (voltage>0)
         {
-            scaledVoltage = (short)(voltage*32767);
+            scaledVoltage = (short)( voltage*(Math.pow(2,15)-1) );
         } else
         {
             scaledVoltage = (short)voltage;
@@ -95,7 +93,7 @@ public class GSBuffer {
 
     /**
      * Add a value/chan to the end of the memory.  MUST add only to end.  MUST increment channel.
-     * @param voltage float from -1 to 1
+     * @param voltage double from -1 to 1
      * @param chan integer
      * @throws ActiveChanException
      */
@@ -121,8 +119,8 @@ public class GSBuffer {
             chansWritten.add(chan);
         }
 
-        short value;
-        try {value = (short)voltageToInt((float)voltage);} catch (VoltageRangeException ex) {throw ex;}
+        int value;
+        try {value = voltageToInt((float)voltage);} catch (VoltageRangeException ex) {throw ex;}
         int writevalue = (chan << c.id_off.intValue() | value);
         buffer.writeInt(writevalue);
         // push endpoint to stack
@@ -142,16 +140,16 @@ public class GSBuffer {
 
         int value = buffer.readInt();
 
-        if (value >> c.eog.intValue() == 1){
+        if (value >>> c.eog.intValue() == 1){
             FlagException e = new FlagException("end of timepoint flag already exists!");
             throw e;
         }
-        int writevalue = ( (1 << c.eog.intValue()) | value);
+        int writeValue = ( (1 << c.eog.intValue()) | value);
 
         // do not use 'appendValue'
         buffer.popPosition();
         buffer.pushPosition();
-        buffer.writeInt(writevalue);
+        buffer.writeInt(writeValue);
         buffer.pushPosition();
 
         // marks end of TP.  Register next TP in hashmap
@@ -173,19 +171,19 @@ public class GSBuffer {
 
         int value = buffer.readInt();
 
-//        if (value >> c.eog.intValue() != 1) {
-//            FlagException e = new FlagException("must tag end of TP before end of buffer");
-//            throw e;
-//        } else if (value >> c.eof.intValue() == 1) {
-//            FlagException e = new FlagException("end of function flag already exists!");
-//            throw e;
-//        }
-        int newvalue = (1 << c.eof.intValue() | value);
+        if ( (value >>> c.eof.intValue()) == 1) {
+            FlagException e = new FlagException("end of function flag already exists!");
+            throw e;
+        } else if ( value >>> c.eog.intValue() != 1) {
+            FlagException e = new FlagException("must tag end of TP before end of buffer");
+            throw e;
+        }
+        int newValue = (1 << c.eof.intValue() | value);
 
         // do not use 'appendValue'
         buffer.popPosition();
         buffer.pushPosition();
-        buffer.writeInt(newvalue);
+        buffer.writeInt(newValue);
         buffer.pushPosition();
     }
 
@@ -200,7 +198,7 @@ public class GSBuffer {
         buffer.pushPosition();
         int value = buffer.readInt();
         buffer.pushPosition();
-        return (short)value;
+        return (short)(value);
     }
 
     /**
@@ -272,7 +270,7 @@ public class GSBuffer {
     public HashMap<Integer, Short> getTPValues(int timepoint)
     {
         HashMap<Integer, Short> ChanValPair= new HashMap<>();
-        int channel, value, eof_eog;
+        int channel, value, eof_eog, eof_flag, eog_flag;
         buffer.pushPosition();
         int tpOffset1 = TPtoPosMap.get(timepoint);
         int tpOffset2 = TPtoPosMap.get(timepoint+1);
@@ -281,19 +279,41 @@ public class GSBuffer {
         for(int i=0; i<numVals; i++)
         {
             value = buffer.readInt();
-            channel = (value >> c.id_off.intValue());
-            if(value >> c.eof.intValue() == 1)
+            System.out.println("original int value = "+value);
+
+            if(value<0)
+            {
+                channel = (-1*value >> c.id_off.intValue());
+                System.out.println("channel value = "+channel);
+                eof_flag = (-1*value >> c.eof.intValue());
+                eog_flag = (-1*value >> c.eog.intValue());
+            } else
+            {
+                channel = (value >> c.id_off.intValue());
+                System.out.println("channel value = "+channel);
+                eof_flag = (value >> c.eof.intValue());
+                eog_flag = (value >> c.eog.intValue());
+            }
+
+            // remove EOF, EOG and channel bits from int value
+            if(eof_flag == 1)
             {
                 channel &= ~128;    // turn eof AND eog flag off
-                System.out.println("channel after eof flipped "+channel);
+                value &= ~(128 << c.id_off.intValue());
+                value &= ~(channel << c.id_off.intValue());
             }
-            if(value >> c.eog.intValue() == 1)
+            else if(eog_flag == 1)
             {
-                channel &= 64;     // turn eog flag off
-                System.out.println("channel after eog flipped "+channel);
+                channel &= ~64;     // turn eog flag off
+                value &= ~(64 << c.id_off.intValue());
+                value &= ~(channel << c.id_off.intValue());
+            } else
+            {
+                value &= ~(channel << c.id_off.intValue());
             }
-            value &= ~(channel << c.id_off.intValue());
-            System.out.println("hasmap value = "+value);
+
+            System.out.println("hashmap value = "+value);
+            System.out.println("channel value = "+channel);
             ChanValPair.put(channel, (short)value);
         }
         buffer.popPosition();
