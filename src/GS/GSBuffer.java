@@ -279,27 +279,24 @@ public class GSBuffer {
         for(int i=0; i<numVals; i++)
         {
             value = buffer.readInt();
-            System.out.println("original int value = "+value);
 
             if(value<0)
             {
-                channel = (-1*value >> c.id_off.intValue());
-                System.out.println("channel value = "+channel);
-                eof_flag = (-1*value >> c.eof.intValue());
-                eog_flag = (-1*value >> c.eog.intValue());
+                channel = (value >>> c.id_off.intValue());
+                eof_flag = (value >>> c.eof.intValue());
+                eog_flag = (value >>> c.eog.intValue());
             } else
             {
-                channel = (value >> c.id_off.intValue());
-                System.out.println("channel value = "+channel);
-                eof_flag = (value >> c.eof.intValue());
-                eog_flag = (value >> c.eog.intValue());
+                channel = (value >>> c.id_off.intValue());
+                eof_flag = (value >>> c.eof.intValue());
+                eog_flag = (value >>> c.eog.intValue());
             }
 
             // remove EOF, EOG and channel bits from int value
             if(eof_flag == 1)
             {
-                channel &= ~128;    // turn eof AND eog flag off
-                value &= ~(128 << c.id_off.intValue());
+                channel &= ~192;    // turn eof AND eog flag off
+                value &= ~(192 << c.id_off.intValue());
                 value &= ~(channel << c.id_off.intValue());
             }
             else if(eog_flag == 1)
@@ -311,9 +308,8 @@ public class GSBuffer {
             {
                 value &= ~(channel << c.id_off.intValue());
             }
-
-            System.out.println("hashmap value = "+value);
-            System.out.println("channel value = "+channel);
+            System.out.println("channel = "+channel);
+            System.out.println("value = "+(short)value);
             ChanValPair.put(channel, (short)value);
         }
         buffer.popPosition();

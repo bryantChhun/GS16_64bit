@@ -136,7 +136,7 @@ public class GSBufferTests {
 
     @Test
     /**
-     * test negative write values
+     * test several negative write values
      */
     public void GSBuffer_VoltageToIntConversion_NegativeValues()
     {
@@ -159,11 +159,11 @@ public class GSBufferTests {
 
     }
 
-    @Test
     /**
      * EOGFlag: test handling of double TP flag write
      * // is this necessary?  double write does nothing anyway...
      */
+    @Test
     public void GSBuffer_EOG_2xWrite()
     {
         try {
@@ -180,7 +180,7 @@ public class GSBufferTests {
     @Test
     /**
      * EOG flag: test correct placement of TP flag
-     * check both positive and negative EOG flags
+     * check both positive and negative values with EOG and EOF flags
      */
     public void GSBuffer_EOG_correctFlag()
     {
@@ -188,37 +188,33 @@ public class GSBufferTests {
             buffertest = new GSBuffer( constants, 2000, 64);
             buffertest.appendValue(1,1);
             buffertest.appendEndofTP();
-        } catch (Exception ex) {fail(ex);}
+            assertEquals(1, buffertest.getLastBlock() >>> constants.eog.intValue());
+            buffertest.clearALL();
 
-        assertEquals(1, buffertest.getLastBlock() >>> constants.eog.intValue());
-
-        try {
             buffertest = new GSBuffer( constants, 2000, 64);
             buffertest.appendValue(-1,1);
             buffertest.appendEndofTP();
-        } catch (Exception ex) {fail(ex);}
+            assertEquals(1, buffertest.getLastBlock() >>> constants.eog.intValue());
+            buffertest.clearALL();
 
-        assertEquals(1, buffertest.getLastBlock() >>> constants.eog.intValue());
-
-        try {
             buffertest = new GSBuffer( constants, 2000, 64);
             buffertest.appendValue(1,1);
             buffertest.appendEndofTP();
             buffertest.appendEndofFunction();
-        } catch (Exception ex) {fail(ex);}
+            //unsigned right shift necessary because EOF is most significant bit.
+            assertEquals(3, buffertest.getLastBlock() >>> constants.eog.intValue());
+            buffertest.clearALL();
 
-        //unsigned right shift necessary because EOF is most significant bit.
-        assertEquals(3, buffertest.getLastBlock() >>> constants.eog.intValue());
-
-        try {
             buffertest = new GSBuffer( constants, 2000, 64);
             buffertest.appendValue(-1,1);
             buffertest.appendEndofTP();
             buffertest.appendEndofFunction();
+            //unsigned right shift necessary because EOF is most significant bit.
+            assertEquals(3, buffertest.getLastBlock() >>> constants.eog.intValue());
+            buffertest.clearALL();
+
         } catch (Exception ex) {fail(ex);}
 
-        //unsigned right shift necessary because EOF is most significant bit.
-        assertEquals(3, buffertest.getLastBlock() >>> constants.eog.intValue());
     }
 
     @Test
@@ -326,7 +322,8 @@ public class GSBufferTests {
 
     @Test
     /**
-     *
+     * loop to write several channels to several time points.
+     * check the written values using "getTPValues"
      */
     public void GSBuffer_MultipleTimePoints()
     {
@@ -336,39 +333,43 @@ public class GSBufferTests {
 
         for(int tp=0; tp<1000; tp++)
         {
-            for(int chan=1; chan <= 5; chan++)
+            for(int chan=0; chan < 5; chan++)
             {
-                try {
-                    double voltage = -0.1*chan;
-                    buffertest.appendValue(voltage, chan);
-                } catch (Exception ex) {fail(ex);}
+                if( tp%2 == 0) {
+                    try {
+                        double voltage = 0.1 * chan;
+                        buffertest.appendValue(voltage, chan);
+                    } catch (Exception ex) {fail(ex);}
+                } else {
+                    try {
+                        double voltage = -0.1*chan;
+                        buffertest.appendValue(voltage, chan);
+                    } catch (Exception ex) {fail(ex);}
+                }
             }
             try{buffertest.appendEndofTP();} catch(Exception ex) {fail(ex);}
         }
         try{buffertest.appendEndofFunction();} catch(Exception ex) {fail(ex);}
 
-        HashMap<Integer, Short> tpMap = buffertest.getTPValues(100);
+        // check negatives, EOG and EOF flags
+        HashMap<Integer, Short> tpMap = buffertest.getTPValues(999);
+        assertEquals((short)(-0.1*0*(Math.pow(2,15))), (short)tpMap.get(0));
+        assertEquals((short)(-0.1*1*(Math.pow(2,15))), (short)tpMap.get(1));
+        assertEquals((short)(-0.1*2*(Math.pow(2,15))), (short)tpMap.get(2));
+        assertEquals((short)(-0.1*3*(Math.pow(2,15))), (short)tpMap.get(3));
+        assertEquals((short)(-0.1*4*(Math.pow(2,15))), (short)tpMap.get(4));
 
-        // iterate throuh all values
-//        for (short temp : tpMap){
-//            assertEquals((short)(1), temp);
-//        }
-//        assertEquals((short)(-0.1*32767), (short)tpMap.get(1));
-//        assertEquals((short)(-0.2*32767), (short)tpMap.get(2));
-//        assertEquals((short)(-0.3*32767), (short)tpMap.get(3));
-//        assertEquals((short)(-0.4*32767), (short)tpMap.get(4));
-//        assertEquals((short)(-0.5*32767), (short)tpMap.get(5));
+        // check positives, EOG flag
+        HashMap<Integer, Short> tpMap2 = buffertest.getTPValues(0);
+        assertEquals((short)(0.1*0*(Math.pow(2,15)-1)), (short)tpMap2.get(0));
+        assertEquals((short)(0.1*1*(Math.pow(2,15)-1)), (short)tpMap2.get(1));
+        assertEquals((short)(0.1*2*(Math.pow(2,15)-1)), (short)tpMap2.get(2));
+        assertEquals((short)(0.1*3*(Math.pow(2,15)-1)), (short)tpMap2.get(3));
+        assertEquals((short)(0.1*4*(Math.pow(2,15)-1)), (short)tpMap2.get(4));
 
     }
 
 
-    //test multiple writes - one channel time series (varying values)
-        // loop values,
-            // write one channel
-        // fail on exception
-        //
 
-    //test multiple writes - multi channel same values
 
-    //test multiple writes -- multi channel multiple values
 }
