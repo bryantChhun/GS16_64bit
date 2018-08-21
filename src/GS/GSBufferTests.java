@@ -16,11 +16,11 @@ public class GSBufferTests {
     private GSBuffer buffertest;
     private GSConstants constants = new GSConstants();
 
-    @Test
     /**
      * test GS buffer constructor for too much data and > 3/4 full.
      */
-    public void GSBuffer_BufferMaxSize()
+    @Test
+    void GSBuffer_BufferMaxSize()
     {
         assertThrows(BufferTooLargeException.class, () -> new GSBuffer(constants, 4001, 64 ));
 
@@ -29,11 +29,11 @@ public class GSBufferTests {
         assertThrows(BufferTooLargeException.class, () -> new GSBuffer(constants,2000, 500 ));
     }
 
-    @Test
     /**
      * test that voltage converter retains range of short
      */
-    public void GSBuffer_VoltageToIntConversion_negativeMax()
+    @Test
+    void GSBuffer_VoltageToIntConversion_negativeMax()
     {
         try {
             buffertest = new GSBuffer( constants, 2000, 64);
@@ -43,11 +43,11 @@ public class GSBufferTests {
         assertEquals(-32768, buffertest.getLastValue() );
     }
 
-    @Test
     /**
      * test that voltage converter retains range of short
      */
-    public void GSBuffer_VoltageToIntConversion_positiveMax()
+    @Test
+    void GSBuffer_VoltageToIntConversion_positiveMax()
     {
         try {
             buffertest = new GSBuffer( constants, 2000, 64);
@@ -57,11 +57,11 @@ public class GSBufferTests {
         assertEquals(32767, buffertest.getLastValue() );
     }
 
-    @Test
     /**
      * test that zero voltage is handled
      */
-    public void GSBuffer_VoltageToIntConversion_zero()
+    @Test
+    void GSBuffer_VoltageToIntConversion_zero()
     {
         try {
             buffertest = new GSBuffer( constants, 2000, 64);
@@ -71,11 +71,11 @@ public class GSBufferTests {
         assertEquals(0, buffertest.getLastValue());
     }
 
-    @Test
     /**
      * test negative bounds exception
      */
-    public void GSBuffer_VoltageToIntConversion_limit_low()
+    @Test
+    void GSBuffer_VoltageToIntConversion_limit_low()
     {
         try {
             buffertest = new GSBuffer( constants, 2000, 64);
@@ -90,11 +90,11 @@ public class GSBufferTests {
         }
     }
 
-    @Test
     /**
      * test positive bounds exception
      */
-    public void GSBuffer_VoltageToIntConversion_limit_high()
+    @Test
+    void GSBuffer_VoltageToIntConversion_limit_high()
     {
         try {
             buffertest = new GSBuffer( constants, 2000, 64);
@@ -109,11 +109,11 @@ public class GSBufferTests {
         }
     }
 
-    @Test
     /**
      * test positive write values
      */
-    public void GSBuffer_VoltageToIntConversion_PostiveValues()
+    @Test
+    void GSBuffer_VoltageToIntConversion_PostiveValues()
     {
         try {
             buffertest = new GSBuffer( constants, 2000, 64);
@@ -134,11 +134,11 @@ public class GSBufferTests {
 
     }
 
-    @Test
     /**
      * test several negative write values
      */
-    public void GSBuffer_VoltageToIntConversion_NegativeValues()
+    @Test
+    void GSBuffer_VoltageToIntConversion_NegativeValues()
     {
         try {
             buffertest = new GSBuffer( constants, 2000, 64);
@@ -164,7 +164,7 @@ public class GSBufferTests {
      * // is this necessary?  double write does nothing anyway...
      */
     @Test
-    public void GSBuffer_EOG_2xWrite()
+    void GSBuffer_EOG_2xWrite()
     {
         try {
             buffertest = new GSBuffer( constants, 2000, 64);
@@ -177,12 +177,13 @@ public class GSBufferTests {
         } catch(FlagException ex) {System.out.println("EOG 2x write pass");}
     }
 
-    @Test
+
     /**
      * EOG flag: test correct placement of TP flag
      * check both positive and negative values with EOG and EOF flags
      */
-    public void GSBuffer_EOG_correctFlag()
+    @Test
+    void GSBuffer_EOG_correctFlag()
     {
         try {
             buffertest = new GSBuffer( constants, 2000, 64);
@@ -217,13 +218,13 @@ public class GSBufferTests {
 
     }
 
-    @Test
     /**
      * EOF flag: test correct placement of end of buffer flag
      * 4 byte int can't hold a positive number with this tag
      *  it will ALWAYS return 2's complement
      */
-    public void GSBuffer_EOF_correctFlag()
+    @Test
+    void GSBuffer_EOF_correctFlag()
     {
         try {
             buffertest = new GSBuffer( constants, 2000, 64);
@@ -245,11 +246,11 @@ public class GSBufferTests {
 
     }
 
-    @Test
     /**
      * attempt to write same active channel twice
      */
-    public void GSBuffer_WriteChannel_2x()
+    @Test
+    void GSBuffer_WriteChannel_2x()
     {
         try {
             buffertest = new GSBuffer( constants, 2000, 64);
@@ -262,11 +263,11 @@ public class GSBufferTests {
 
     }
 
-    @Test
     /**
      * attempt to write beyond channel range
      */
-    public void GSBuffer_WriteChannel_range()
+    @Test
+    void GSBuffer_WriteChannel_range()
     {
         try {
             buffertest = new GSBuffer( constants, 2000, 64);
@@ -282,11 +283,11 @@ public class GSBufferTests {
 
     }
 
-    @Test
     /**
      * attempt to write not in increasing order
      */
-    public void GSBuffer_WriteChannel_order()
+    @Test
+    void GSBuffer_WriteChannel_order()
     {
         try {
             buffertest = new GSBuffer( constants, 2000, 64);
@@ -300,12 +301,11 @@ public class GSBufferTests {
 
     }
 
-
-    @Test
     /**
      * Retrieve active channels for current timepoint
      */
-    public void GSBuffer_getActiveChannels()
+    @Test
+    void GSBuffer_getActiveChannels()
     {
         try {
             buffertest = new GSBuffer( constants, 2000, 64);
@@ -320,12 +320,12 @@ public class GSBufferTests {
 
     }
 
-    @Test
     /**
      * loop to write several channels to several time points.
      * check the written values using "getTPValues"
      */
-    public void GSBuffer_MultipleTimePoints()
+    @Test
+    void GSBuffer_MultipleTimePoints()
     {
         try {
             buffertest = new GSBuffer( constants, 2000, 5);

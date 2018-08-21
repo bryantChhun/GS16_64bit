@@ -16,7 +16,7 @@ public class gsbufferTest {
 
         try {
             buffertest = new GSBuffer(gsconst, 2000, 64);
-        } catch (BufferTooLargeException ex) {System.out.println("voltage to int conversion: "+ex);}
+        } catch (Exception ex) {System.out.println("voltage to int conversion: "+ex);}
 
         try {
             buffertest.appendValue(-0.5,1);

@@ -3,6 +3,7 @@ package GS;
 import java.util.*;
 
 import constants.GSConstants;
+import coremem.ContiguousMemoryInterface;
 import coremem.buffers.ContiguousBuffer;
 
 /**
@@ -39,28 +40,37 @@ public class GSBuffer {
     private GSConstants c;
 
     /**
-     *
+     * Constructor creates buffer by simple maxTP*maxChan calculation
+     *       Buffer has a maximum capacity of 256k VALUES, values = 32 bit each
      * @param maxTP number of timepoints addressed
      * @param maxChan: maximum number of channels that will be addressed
      */
-    public GSBuffer(GSConstants pconstants, int maxTP, int maxChan) throws BufferTooLargeException {
+    public GSBuffer(GSConstants pconstants, int maxTP, int maxChan) throws BufferTooLargeException, BoardInitializeException {
+
         c = pconstants;
-        tpsWritten = 0;
-        valsWritten = 0;
-        int maxSizeInBytes = maxTP * maxChan * 4; //using 32 bit
-        // Buffer has capacity of 256k VALUES
+//        if(c.id_off == null || c.eog == null || c.eof == null) {
+//            throw new BoardInitializeException(
+//                    "GS DAC Board constants not Initialized.  Must construct a GSSequencer first");
+//        }
+        int maxSizeInBytes = maxTP * maxChan * 4;
         if ((maxSizeInBytes / 4) >= 256000) {
-            throw new BufferTooLargeException("Requested buffer too large.  Reduce tps or num chans");
+            throw new BufferTooLargeException(
+                    "Requested buffer too large.  Reduce tps or num chans");
         } else if ((maxSizeInBytes / 4) >= 192000 && (maxSizeInBytes / 4) < 256000) {
-            throw new BufferTooLargeException("Warning: Requested buffer > 3/4 max capacity");
+            throw new BufferTooLargeException(
+                    "Warning: Requested buffer > 3/4 max capacity");
         } else {
             buffer = ContiguousBuffer.allocate(maxSizeInBytes);
         }
         buffer.pushPosition();
-        chansWritten = new HashSet<Integer>();
-        activeChans = new HashSet<Integer>();
+
+        // initialize trackers
+        tpsWritten = 0;
+        valsWritten = 0;
+        chansWritten = new HashSet<>();
+        activeChans = new HashSet<>();
         activeChans.add(-1);
-        TPtoPosMap = new HashMap<Integer, Integer>();
+        TPtoPosMap = new HashMap<>();
         TPtoPosMap.put(0,0);
     }
 
@@ -69,13 +79,15 @@ public class GSBuffer {
      * Scale limits are based on 2's complement
      * @param voltage float ranging from -1 to 1
      * @return scaled voltage recast as short.
-     * @throws VoltageRangeException
+     * @throws VoltageRangeException value is less than 1 or greater than 1
      */
     private int voltageToInt(float voltage) throws VoltageRangeException
     {
         int scaledVoltage;
-        if(voltage < -1 || voltage > 1){
-            throw new VoltageRangeException("float voltage is out of range");
+        if(voltage < -1 || voltage > 1)
+        {
+            throw new VoltageRangeException(
+                    "float voltage is out of range");
         } else if (voltage<0)
         {
             scaledVoltage = (short)( voltage*(Math.pow(2,15)) );
@@ -95,24 +107,21 @@ public class GSBuffer {
      * Add a value/chan to the end of the memory.  MUST add only to end.  MUST increment channel.
      * @param voltage double from -1 to 1
      * @param chan integer
-     * @throws ActiveChanException
+     * @throws ActiveChanException must follow channel writing rules
      */
     public void appendValue(double voltage, int chan) throws ActiveChanException, VoltageRangeException
     {
-        if( (Collections.max(activeChans) > chan) ) {
-            ActiveChanException e = new ActiveChanException(
+        if( (Collections.max(activeChans) > chan) )
+        {
+            throw new ActiveChanException(
                     "Higher channel exists.  Must write in increasing channel order");
-            throw e;
         } else if(activeChans.contains(chan))
         {
-            ActiveChanException e = new ActiveChanException(
+            throw new ActiveChanException(
                     "Channel already active for current timepoint.  Replace or change Channel.");
-            throw e;
         } else if(chan < 0 || chan >=64){
-            ActiveChanException e = new ActiveChanException(
-                    "Channel must be between 0 and 64"
-            );
-            throw e;
+            throw new ActiveChanException(
+                    "Channel must be between 0 and 64");
         } else
         {
             activeChans.add(chan);
@@ -140,9 +149,10 @@ public class GSBuffer {
 
         int value = buffer.readInt();
 
-        if (value >>> c.eog.intValue() == 1){
-            FlagException e = new FlagException("end of timepoint flag already exists!");
-            throw e;
+        if (value >>> c.eog.intValue() == 1)
+        {
+            throw new FlagException(
+                    "end of timepoint flag already exists!");
         }
         int writeValue = ( (1 << c.eog.intValue()) | value);
 
@@ -172,11 +182,11 @@ public class GSBuffer {
         int value = buffer.readInt();
 
         if ( (value >>> c.eof.intValue()) == 1) {
-            FlagException e = new FlagException("end of function flag already exists!");
-            throw e;
+            throw new FlagException(
+                    "end of function flag already exists!");
         } else if ( value >>> c.eog.intValue() != 1) {
-            FlagException e = new FlagException("must tag end of TP before end of buffer");
-            throw e;
+            throw new FlagException(
+                    "must tag end of TP before end of buffer");
         }
         int newValue = (1 << c.eof.intValue() | value);
 
@@ -308,8 +318,8 @@ public class GSBuffer {
             {
                 value &= ~(channel << c.id_off.intValue());
             }
-            System.out.println("channel = "+channel);
-            System.out.println("value = "+(short)value);
+            //System.out.println("channel = "+channel);
+            //System.out.println("value = "+(short)value);
             ChanValPair.put(channel, (short)value);
         }
         buffer.popPosition();
@@ -333,5 +343,13 @@ public class GSBuffer {
         buffer.fillBytes((byte)0);
     }
 
+    /**
+     * retrieve memory interface of this block
+     * @return memory interface
+     */
+    public ContiguousMemoryInterface getMemory()
+    {
+        return buffer.getContiguousMemory();
+    }
 
 }

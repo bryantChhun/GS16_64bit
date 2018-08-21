@@ -11,7 +11,7 @@ constructor(GSbuffer)
         thresh flag high to low?
 
 
-
+overload
 play(list bufferin)
     stack bufferStack = new stack(arraylist bufferin)
     fill buffers
@@ -23,4 +23,5 @@ play(list bufferin)
             send next buffer stack
             sleep
 
-
+overload
+play(one buffer)
