@@ -95,11 +95,11 @@ public class AO64_Continuous_Function {
         //vent.hEvent = myHandle.getPointer().getLong(0);
 
         // enable local interrupt (not DMA)
-        GSConstants.LOCAL = new NativeLong(); GSConstants.LOCAL.setValue(0);
+        GSConstants.InterruptType = new NativeLong(); GSConstants.InterruptType.setValue(0);
         // monitor interrupt=4, Buffer threshold flag High-to-Low transition.
         NativeLong ulValue = new NativeLong(); ulValue.setValue(0x04);
-        lINSTANCE.AO64_66_EnableInterrupt(GSConstants.ulBdNum, ulValue, GSConstants.LOCAL, GSConstants.ulError);
-        lINSTANCE.AO64_66_Register_Interrupt_Notify(GSConstants.ulBdNum, Event, ulValue, GSConstants.LOCAL, GSConstants.ulError);
+        lINSTANCE.AO64_66_EnableInterrupt(GSConstants.ulBdNum, ulValue, GSConstants.InterruptType, GSConstants.ulError);
+        lINSTANCE.AO64_66_Register_Interrupt_Notify(GSConstants.ulBdNum, Event, ulValue, GSConstants.InterruptType, GSConstants.ulError);
 
         System.out.println("Continuously Writing using interrupts now....");
         System.out.println("Checking data memory allocation = "+((Memory) data).size());
@@ -145,7 +145,7 @@ public class AO64_Continuous_Function {
         System.out.println("Cancel Interrupt Notify");
         lINSTANCE.AO64_66_Cancel_Interrupt_Notify(GSConstants.ulBdNum, Event, GSConstants.ulError);
         System.out.println("Disable Interrupt");
-        lINSTANCE.AO64_66_DisableInterrupt(GSConstants.ulBdNum, ulValue, GSConstants.LOCAL, GSConstants.ulError);
+        lINSTANCE.AO64_66_DisableInterrupt(GSConstants.ulBdNum, ulValue, GSConstants.InterruptType, GSConstants.ulError);
         System.out.println("Disable Clock");
         lINSTANCE.AO64_66_Disable_Clock(GSConstants.ulBdNum, GSConstants.ulError);
         System.out.println("Closing DMA channel");

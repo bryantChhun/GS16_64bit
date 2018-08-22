@@ -36,6 +36,7 @@ public class GSBuffer {
     private HashMap<Integer, Integer> TPtoPosMap;
     private int tpsWritten;
     private int valsWritten;
+    private int maxSizeInBytes;
 
     private GSConstants c;
 
@@ -52,7 +53,7 @@ public class GSBuffer {
 //            throw new BoardInitializeException(
 //                    "GS DAC Board constants not Initialized.  Must construct a GSSequencer first");
 //        }
-        int maxSizeInBytes = maxTP * maxChan * 4;
+        maxSizeInBytes = maxTP * maxChan * 4;
         if ((maxSizeInBytes / 4) >= 256000) {
             throw new BufferTooLargeException(
                     "Requested buffer too large.  Reduce tps or num chans");
@@ -262,6 +263,13 @@ public class GSBuffer {
     {
         return valsWritten;
     }
+
+    /**
+     * get allocated size of this buffer
+     * does not represent the # values written
+     * @return total size in bytes
+     */
+    public int getMaxSizeInBytes() { return maxSizeInBytes;}
 
 
     /**

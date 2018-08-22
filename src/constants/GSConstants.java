@@ -31,10 +31,13 @@ public class GSConstants {
     public static Pointer testptr;
 
     // for DMA memory handling
-    public static NativeLong LOCAL;
+    public static NativeLong InterruptType;
     public static NativeLong ulChannel;
     public static NativeLong ulWords;
 
+    /**
+     * used by tests when board is not present for initialization
+     */
     public GSConstants()
     {
         id_off = new NativeLong();
