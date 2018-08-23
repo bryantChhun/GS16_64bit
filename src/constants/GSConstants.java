@@ -1,11 +1,7 @@
 package constants;
 
 import com.sun.jna.NativeLong;
-import com.sun.jna.Pointer;
 import com.sun.jna.ptr.NativeLongByReference;
-import com.sun.jna.ptr.PointerByReference;
-
-import java.util.List;
 
 /**
  * @author Bryant Chhun
@@ -24,11 +20,9 @@ public class GSConstants {
     public static NativeLong BCR, Reserved, Reserved1, BUFFER_OPS, FW_REV, AUTO_CAL, OUTPUT_DATA_BUFFER, BUFFER_SIZE, BUFFER_THRSHLD, RATE_A, RATE_B;
 
     // input/output values from board
-    public static NativeLong ValueRead, ValueRead1;
+    public static NativeLong ValueRead;
     public static NativeLong[] ReadValue;
-    public static NativeLong[] ulData; // this is an ARRAY of NativeLong.
-    public static NativeLongByReference BuffPtr, NewBuffPtr;
-    public static Pointer testptr;
+    public static NativeLongByReference BuffPtr;
 
     // for DMA memory handling
     public static NativeLong InterruptType;
@@ -40,11 +34,8 @@ public class GSConstants {
      */
     public GSConstants()
     {
-        id_off = new NativeLong();
-        id_off.setValue(24);
-        eog = new NativeLong();
-        eog.setValue(30);
-        eof = new NativeLong();
-        eof.setValue(31);
+        id_off = new NativeLong(24);
+        eog = new NativeLong(30);
+        eof = new NativeLong(31);
     }
 }

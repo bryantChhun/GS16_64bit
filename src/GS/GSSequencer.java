@@ -9,13 +9,11 @@ import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.ptr.NativeLongByReference;
 import constants.GSConstants;
-import coremem.ContiguousMemoryInterface;
 
-import java.beans.EventHandler;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
-import java.util.LinkedList;
+import java.util.ArrayDeque;
 
 /**
  * for continuous function, this is the order of operations:
@@ -35,14 +33,16 @@ public class GSSequencer {
 
     private static AO64_64b_Driver_CLibrary INSTANCE;
 
-    //private ContiguousMemoryInterface JNAdata;
-
     private GS_NOTIFY_OBJECT Event = new GS_NOTIFY_OBJECT();
     private HANDLE myHandle = new HANDLE();
     private DWORD EventStatus = new DWORD();
     private NativeLong ulValue;
     //    private final DWORD WAIT_ABANDONED, WAIT_OBJECT_0, WAIT_TIMEOUT, WAIT_FAILED;
     NativeLongByReference BuffPtr = new NativeLongByReference();
+
+    // to do:
+    //      diff constructors for different thresholds/sample rates?
+    //      buffer size checks
 
 
     /**
@@ -91,7 +91,7 @@ public class GSSequencer {
      * @param data
      * @return
      */
-    public boolean play(LinkedList<GSBuffer> data)
+    public boolean play(ArrayDeque<GSBuffer> data)
     {
 //        JNAdata[0] = data[0].getMemory();
 //        JNAdata[0].getJNAPointer();
@@ -150,13 +150,12 @@ public class GSSequencer {
         return true;
     }
 
-    public void sendDMABuffer(GSBuffer data)
+    private void sendDMABuffer(GSBuffer bufferElement)
     {
-        //JNAdata = data.getMemory().getJNAPointer().share(0)
-        BuffPtr.setPointer(data.getMemory().getJNAPointer().share(0));
+        BuffPtr.setPointer(bufferElement.getMemory().getJNAPointer().share(0));
         INSTANCE.AO64_66_DMA_Transfer(GSConstants.ulBdNum, GSConstants.ulChannel, GSConstants.ulWords, BuffPtr, GSConstants.ulError);
     }
-
+    
     /**
      * Set the desired sampling rate.
      * Board contains Rate-A and Rate-B.  Rate-B can be used for triggering, while Rate-A is used for sampling
@@ -164,7 +163,7 @@ public class GSSequencer {
      * @param fRate desired sample rate
      * @return actual sample rate
      */
-    public double setSampleRate(double fRate)
+    private double setSampleRate(double fRate)
     {
         return INSTANCE.AO64_66_Set_Sample_Rate(GSConstants.ulBdNum, fRate, GSConstants.ulError);
     }
@@ -173,7 +172,7 @@ public class GSSequencer {
      * Threshold number of values that triggers a buffer threshold flag interruption event
      * @param numValues
      */
-    public void setBufferThreshold(int numValues)
+    private void setBufferThreshold(int numValues)
     {
         NativeLong val = new NativeLong(numValues);
         INSTANCE.AO64_66_Write_Local32(GSConstants.ulBdNum, GSConstants.ulError, GSConstants.BUFFER_THRSHLD, val);
@@ -365,7 +364,7 @@ public class GSSequencer {
         }
     }
 
-    public static void connectOutputs()
+    private static void connectOutputs()
     {
         if(GSConstants.disconnect.equals(0)){
             return;
@@ -383,7 +382,7 @@ public class GSSequencer {
         }
     }
 
-    public void closeHandle()
+    private void closeHandle()
     {
         INSTANCE.AO64_66_Close_Handle(GSConstants.ulBdNum, GSConstants.ulError);
     }

@@ -38,7 +38,7 @@ public class GSBuffer {
     private int valsWritten;
     private int maxSizeInBytes;
 
-    private GSConstants c;
+//    private GSConstants c;
 
     /**
      * Constructor creates buffer by simple maxTP*maxChan calculation
@@ -46,13 +46,12 @@ public class GSBuffer {
      * @param maxTP number of timepoints addressed
      * @param maxChan: maximum number of channels that will be addressed
      */
-    public GSBuffer(GSConstants pconstants, int maxTP, int maxChan) throws BufferTooLargeException, BoardInitializeException {
+    public GSBuffer(int maxTP, int maxChan) throws BufferTooLargeException, BoardInitializeException {
 
-        c = pconstants;
-//        if(c.id_off == null || c.eog == null || c.eof == null) {
-//            throw new BoardInitializeException(
-//                    "GS DAC Board constants not Initialized.  Must construct a GSSequencer first");
-//        }
+        if(GSConstants.id_off == null || GSConstants.eog == null || GSConstants.eof == null) {
+            throw new BoardInitializeException(
+                    "GS DAC Board constants not Initialized.  Must construct a GSSequencer first");
+        }
         maxSizeInBytes = maxTP * maxChan * 4;
         if ((maxSizeInBytes / 4) >= 256000) {
             throw new BufferTooLargeException(
@@ -131,7 +130,7 @@ public class GSBuffer {
 
         int value;
         try {value = voltageToInt((float)voltage);} catch (VoltageRangeException ex) {throw ex;}
-        int writevalue = (chan << c.id_off.intValue() | value);
+        int writevalue = (chan << GSConstants.id_off.intValue() | value);
         buffer.writeInt(writevalue);
         // push endpoint to stack
         buffer.pushPosition();
@@ -150,12 +149,12 @@ public class GSBuffer {
 
         int value = buffer.readInt();
 
-        if (value >>> c.eog.intValue() == 1)
+        if (value >>> GSConstants.eog.intValue() == 1)
         {
             throw new FlagException(
                     "end of timepoint flag already exists!");
         }
-        int writeValue = ( (1 << c.eog.intValue()) | value);
+        int writeValue = ( (1 << GSConstants.eog.intValue()) | value);
 
         // do not use 'appendValue'
         buffer.popPosition();
@@ -182,14 +181,14 @@ public class GSBuffer {
 
         int value = buffer.readInt();
 
-        if ( (value >>> c.eof.intValue()) == 1) {
+        if ( (value >>> GSConstants.eof.intValue()) == 1) {
             throw new FlagException(
                     "end of function flag already exists!");
-        } else if ( value >>> c.eog.intValue() != 1) {
+        } else if ( value >>> GSConstants.eog.intValue() != 1) {
             throw new FlagException(
                     "must tag end of TP before end of buffer");
         }
-        int newValue = (1 << c.eof.intValue() | value);
+        int newValue = (1 << GSConstants.eof.intValue() | value);
 
         // do not use 'appendValue'
         buffer.popPosition();
@@ -300,31 +299,31 @@ public class GSBuffer {
 
             if(value<0)
             {
-                channel = (value >>> c.id_off.intValue());
-                eof_flag = (value >>> c.eof.intValue());
-                eog_flag = (value >>> c.eog.intValue());
+                channel = (value >>> GSConstants.id_off.intValue());
+                eof_flag = (value >>> GSConstants.eof.intValue());
+                eog_flag = (value >>> GSConstants.eog.intValue());
             } else
             {
-                channel = (value >>> c.id_off.intValue());
-                eof_flag = (value >>> c.eof.intValue());
-                eog_flag = (value >>> c.eog.intValue());
+                channel = (value >>> GSConstants.id_off.intValue());
+                eof_flag = (value >>> GSConstants.eof.intValue());
+                eog_flag = (value >>> GSConstants.eog.intValue());
             }
 
             // remove EOF, EOG and channel bits from int value
             if(eof_flag == 1)
             {
                 channel &= ~192;    // turn eof AND eog flag off
-                value &= ~(192 << c.id_off.intValue());
-                value &= ~(channel << c.id_off.intValue());
+                value &= ~(192 << GSConstants.id_off.intValue());
+                value &= ~(channel << GSConstants.id_off.intValue());
             }
             else if(eog_flag == 1)
             {
                 channel &= ~64;     // turn eog flag off
-                value &= ~(64 << c.id_off.intValue());
-                value &= ~(channel << c.id_off.intValue());
+                value &= ~(64 << GSConstants.id_off.intValue());
+                value &= ~(channel << GSConstants.id_off.intValue());
             } else
             {
-                value &= ~(channel << c.id_off.intValue());
+                value &= ~(channel << GSConstants.id_off.intValue());
             }
             //System.out.println("channel = "+channel);
             //System.out.println("value = "+(short)value);
