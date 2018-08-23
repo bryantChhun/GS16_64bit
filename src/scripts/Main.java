@@ -40,8 +40,8 @@ public class Main {
         // write all channels with basic outputs
         //new AO64_Basic_output_test(ex.INSTANCE, ex);
 
-        // write all channels sequentially
-        //new AO64_Sequential_Direct(ex.INSTANCE, ex);
+        //new AO64_Sequential_Direct(ex.INSTAN
+        // write all channels sequentiallyCE, ex);
 
         // write all channels simultaneously
         //new AO64_Simultaneous_Direct(ex.INSTANCE, ex);

@@ -58,7 +58,7 @@ public class AO64_Continuous_Function {
         System.out.println("Initialization Complete");
 
         System.out.println("Set Sample rate");
-        lINSTANCE.AO64_66_Set_Sample_Rate(GSConstants.ulBdNum, 500000.0, GSConstants.ulError);
+        lINSTANCE.AO64_66_Set_Sample_Rate(GSConstants.ulBdNum, 50000.0, GSConstants.ulError);
 
         System.out.println("Autocalibrating the board");
         if(lINSTANCE.AO64_66_Autocal(GSConstants.ulBdNum, GSConstants.ulError).intValue() != 1)
@@ -69,10 +69,13 @@ public class AO64_Continuous_Function {
             System.out.println("Autocal Passed");
         }
         System.out.println("Please Verify that all Channels are now at Zero Volts");
-        try { System.in.read(); } catch (Exception except) { System.out.println(except); }
+        //try { System.in.read(); } catch (Exception except) { System.out.println(except); }
 
         // buffer threshold
-        NativeLong val = new NativeLong(); val.setValue(65536);
+        //NativeLong val = new NativeLong(); val.setValue(65536);
+        NativeLong val = new NativeLong(65536);
+        GSConstants.BUFFER_THRSHLD = new NativeLong(0x20);
+        //System.out.print("BufferThreshold register location = "+GSConstants.BUFFER_THRSHLD.toString());
         lINSTANCE.AO64_66_Write_Local32(GSConstants.ulBdNum, GSConstants.ulError, GSConstants.BUFFER_THRSHLD, val);
 
         // Generate square data
@@ -90,7 +93,7 @@ public class AO64_Continuous_Function {
 
         // Store event handle
         // hEvent is a U64 object, to which we assign a pointer to the handle.
-        Event.hEvent.setPointer(myHandle.getPointer().share(0,16));
+        Event.hEvent.setPointer(myHandle.getPointer().share(0));
         //Event.hEvent = myHandle;
         //vent.hEvent = myHandle.getPointer().getLong(0);
 
@@ -102,7 +105,9 @@ public class AO64_Continuous_Function {
         lINSTANCE.AO64_66_Register_Interrupt_Notify(GSConstants.ulBdNum, Event, ulValue, GSConstants.InterruptType, GSConstants.ulError);
 
         System.out.println("Continuously Writing using interrupts now....");
-        System.out.println("Checking data memory allocation = "+((Memory) data).size());
+        //System.out.println("Checking data memory allocation = "+((Memory) data).size());
+
+        NativeLong register = new NativeLong(0x1C);
 
         GSConstants.ulChannel = new NativeLong(); GSConstants.ulChannel.setValue(0x01);
         GSConstants.ulWords = new NativeLong(); GSConstants.ulWords.setValue(0x10000);
@@ -110,37 +115,41 @@ public class AO64_Continuous_Function {
         lINSTANCE.AO64_66_DMA_Transfer(GSConstants.ulBdNum, GSConstants.ulChannel, GSConstants.ulWords, GSConstants.BuffPtr, GSConstants.ulError);
         lINSTANCE.AO64_66_DMA_Transfer(GSConstants.ulBdNum, GSConstants.ulChannel, GSConstants.ulWords, GSConstants.BuffPtr, GSConstants.ulError);
         lINSTANCE.AO64_66_DMA_Transfer(GSConstants.ulBdNum, GSConstants.ulChannel, GSConstants.ulWords, GSConstants.BuffPtr, GSConstants.ulError);
+        System.out.println("buffer size clock start = "+lINSTANCE.AO64_66_Read_Local32(GSConstants.ulBdNum, GSConstants.ulError, register).toString());
 
         lex.AO64_Connect_Outputs();
         lINSTANCE.AO64_66_Enable_Clock(GSConstants.ulBdNum, GSConstants.ulError);
+        EventStatus.setValue(Kernel32.INSTANCE.WaitForSingleObject(myHandle,  1));
 
-        do {
-            input = keyboard.nextLine();
-
-            EventStatus.setValue(Kernel32.INSTANCE.WaitForSingleObject(myHandle, 3*1000));
-            switch(EventStatus.intValue())
-            {
-                case 0://wait_object_0, object is signaled;
-                    System.out.print("object signaled ... writing to outputs");
+        int flag = 0;
+        while(flag <750) {
+            EventStatus.setValue(Kernel32.INSTANCE.WaitForSingleObject(myHandle,  1));
+            System.out.println("buffer size before switch = "+lINSTANCE.AO64_66_Read_Local32(GSConstants.ulBdNum, GSConstants.ulError, register).toString());
+            switch (EventStatus.intValue()) {
+                case 0x00000000://wait_object_0, object is signaled;
+                    System.out.println("object signaled ... writing to outputs");
+                    //System.out.println("buffer size after signaled = "+lINSTANCE.AO64_66_Read_Local32(GSConstants.ulBdNum, GSConstants.ulError, register).toString());
                     lINSTANCE.AO64_66_DMA_Transfer(GSConstants.ulBdNum, GSConstants.ulChannel, GSConstants.ulWords, GSConstants.BuffPtr, GSConstants.ulError);
                     lINSTANCE.AO64_66_DMA_Transfer(GSConstants.ulBdNum, GSConstants.ulChannel, GSConstants.ulWords, GSConstants.BuffPtr, GSConstants.ulError);
+                    //EventStatus.setValue(Kernel32.INSTANCE.WaitForSingleObject(myHandle,  1));
+                    flag +=1;
                     break;
                 case 0x80://wait abandoned;
                     System.out.print("Error ... Wait abandoned");
                     break;
                 case 0x102://wait timeout.  object stat is non signaled
-                    System.out.print("Error ... Wait timeout");
+                    System.out.println("Error ... Wait timeout");
+                    System.out.println("current buffer size = "+lINSTANCE.AO64_66_Read_Local32(GSConstants.ulBdNum, GSConstants.ulError, register).toString());
+                    //EventStatus.setValue(Kernel32.INSTANCE.WaitForSingleObject(myHandle,  1));
+                    flag+=1;
                     break;
                 case 0xFFFFFFFF:// wait failed.  Function failed.  call GetLastError for extended info.
                     System.out.print("Error ... Wait failed");
                     break;
-//                default:
-//                    System.out.println("Error ... Interrupt Timeout");
-//                    break;
+                default:
+                    break;
             }
-//            if("".equals(input))
-//                break;
-        } while (!("".equals(keyboard.nextLine())));
+        }
 
         System.out.println("Cancel Interrupt Notify");
         lINSTANCE.AO64_66_Cancel_Interrupt_Notify(GSConstants.ulBdNum, Event, GSConstants.ulError);
