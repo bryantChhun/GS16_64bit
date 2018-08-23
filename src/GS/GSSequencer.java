@@ -37,7 +37,6 @@ public class GSSequencer {
     private HANDLE myHandle = new HANDLE();
     private DWORD EventStatus = new DWORD();
     private NativeLong ulValue;
-    //    private final DWORD WAIT_ABANDONED, WAIT_OBJECT_0, WAIT_TIMEOUT, WAIT_FAILED;
     NativeLongByReference BuffPtr = new NativeLongByReference();
 
     // to do:
@@ -53,19 +52,12 @@ public class GSSequencer {
      *  3) Initialize
      *  4) Autocalibrate only ONCE per day or computer restart.
      */
-    GSSequencer()
+    GSSequencer(int num_threshold_values, int sample_rate)
     {
         INSTANCE = AO64_64b_Driver_CLibrary.INSTANCE;
 
         GSConstants.ulBdNum = new NativeLong(1);
         GSConstants.ulError = new NativeLongByReference();
-        //Event = new GS_NOTIFY_OBJECT();
-        //EventStatus = new DWORD();
-//        WAIT_ABANDONED = new DWORD(0x00000080);
-//        WAIT_OBJECT_0 = new DWORD(0x00000000);
-//        WAIT_TIMEOUT = new DWORD(0x00000102);
-//        WAIT_FAILED = new DWORD(0xFFFFFFFF);
-        //myHandle = new HANDLE();
 
         findBoards();
         getHandle();
@@ -74,8 +66,8 @@ public class GSSequencer {
         InitializeBoard();
         AutoCalibration();
 
-        setBufferThreshold(128000);
-        setSampleRate(500000);
+        setBufferThreshold(num_threshold_values);
+        setSampleRate(sample_rate);
 
 
     }
@@ -93,27 +85,6 @@ public class GSSequencer {
      */
     public boolean play(ArrayDeque<GSBuffer> data)
     {
-//        JNAdata[0] = data[0].getMemory();
-//        JNAdata[0].getJNAPointer();
-        //stack buffer
-        //fill buffers
-        //start clock
-        // while more buffer to send
-        //    if below threshold, send buffer
-        //    sleep
-        //
-        //wait for play to finish
-        //return true;
-
-        // 1) (check size of next linkedlist GSbuffer -- must be less than the available space)
-        // 2) check for clock started, start if off
-        // 3) while buffer threshold high
-        //        check size of next linkedlist GS buffer (?)
-        //        Wait until lower than threshold and next buffer is appropriate size, then send to buffer from LL
-        //
-        // 4) wait for LL to empty (no element exception)
-        // 5) return true when complete
-
         try{
             setEventHandlers();
             setEnableInterrupt(0, 0x04);
@@ -122,36 +93,43 @@ public class GSSequencer {
 
         connectOutputs();
         openDMAChannel(1);
+
+        sendDMABuffer(data.remove());
+        sendDMABuffer(data.remove());
+
+        // check here to compare current DMA occupancy vs threshold, if threshold flag is high-low
         startClock();
 
-        while(data.peek() != null)
+        NativeLong register = new NativeLong(0x1C);
+        System.out.println("writing to outputs now");
+        while(!data.isEmpty())
         {
+            EventStatus.setValue(Kernel32.INSTANCE.WaitForSingleObject(myHandle, 1));
+            System.out.print("buffer size before switch = "+INSTANCE.AO64_66_Read_Local32(GSConstants.ulBdNum, GSConstants.ulError, register).toString());
             switch(EventStatus.intValue()) {
                 case 0x00://wait_object_0, object is signaled;
-                    System.out.print("object signaled ... writing to outputs");
+                    System.out.println(" object signaled ... writing to outputs");
                     sendDMABuffer(data.remove());
-                    continue;
+                    break;
                 case 0x80://wait abandoned;
-                    System.out.print("Error ... Wait abandoned");
+                    System.out.println(" Error ... Wait abandoned");
                     break;
                 case 0x102://wait timeout.  object stat is non signaled
-                    System.out.print("Error ... Wait timeout");
+                    System.out.println(" Error ... Wait timeout");
                     break;
                 case 0xFFFFFFFF:// wait failed.  Function failed.  call GetLastError for extended info.
-                    System.out.print("Error ... Wait failed");
+                    System.out.println(" Error ... Wait failed");
                     break;
-//                default:
-//                    continue;
             }
 
         }
-
 
         return true;
     }
 
     private void sendDMABuffer(GSBuffer bufferElement)
     {
+        GSConstants.ulWords = new NativeLong(0x10000);
         BuffPtr.setPointer(bufferElement.getMemory().getJNAPointer().share(0));
         INSTANCE.AO64_66_DMA_Transfer(GSConstants.ulBdNum, GSConstants.ulChannel, GSConstants.ulWords, BuffPtr, GSConstants.ulError);
     }
@@ -165,6 +143,7 @@ public class GSSequencer {
      */
     private double setSampleRate(double fRate)
     {
+        System.out.println("setting sample rate = "+fRate);
         return INSTANCE.AO64_66_Set_Sample_Rate(GSConstants.ulBdNum, fRate, GSConstants.ulError);
     }
 
@@ -174,6 +153,7 @@ public class GSSequencer {
      */
     private void setBufferThreshold(int numValues)
     {
+        System.out.println("setting buffer threshold = "+numValues);
         NativeLong val = new NativeLong(numValues);
         INSTANCE.AO64_66_Write_Local32(GSConstants.ulBdNum, GSConstants.ulError, GSConstants.BUFFER_THRSHLD, val);
     }
@@ -216,7 +196,7 @@ public class GSSequencer {
 
     private void setDisableInterrupt()
     {
-        INSTANCE.AO64_66_EnableInterrupt(GSConstants.ulBdNum, ulValue, GSConstants.InterruptType, GSConstants.ulError);
+        INSTANCE.AO64_66_DisableInterrupt(GSConstants.ulBdNum, ulValue, GSConstants.InterruptType, GSConstants.ulError);
     }
 
     /**
@@ -232,7 +212,6 @@ public class GSSequencer {
             throw new InterruptDeviceTypeException("Interrupt device type not created");
         } else{
             INSTANCE.AO64_66_Register_Interrupt_Notify(GSConstants.ulBdNum, Event, ulValue, GSConstants.InterruptType, GSConstants.ulError);
-            EventStatus.setValue(Kernel32.INSTANCE.WaitForSingleObject(myHandle, 1000));
         }
     }
 
@@ -297,7 +276,6 @@ public class GSSequencer {
 
     private void setBoardParams()
     {
-        GSConstants.FW_REV = new NativeLong(0x10);
         GSConstants.numChan = new NativeLong();
         GSConstants.id_off = new NativeLong();
         GSConstants.eog = new NativeLong();
@@ -331,20 +309,21 @@ public class GSSequencer {
             GSConstants.ReadValue[i] = new NativeLong( (i << GSConstants.id_off.intValue()) | (1 << GSConstants.eog.intValue()) | 0x8000 );
         }
 
-//        System.out.println("numChan : ... : " + GSConstants.numChan);
-//        System.out.println("id_off: ..... : " + GSConstants.id_off);
-//        System.out.println("eog : ....... : " + GSConstants.eog);
-//        System.out.println("eof : ....... : " + GSConstants.eof);
+        System.out.println("numChan : ... : " + GSConstants.numChan);
+        System.out.println("id_off: ..... : " + GSConstants.id_off);
+        System.out.println("eog : ....... : " + GSConstants.eog);
+        System.out.println("eof : ....... : " + GSConstants.eof);
     }
 
     private void InitializeBoard()
     {
+        System.out.println("Initializing Board");
         INSTANCE.AO64_66_Initialize(GSConstants.ulBdNum, GSConstants.ulError);
         GSConstants.BCR = new NativeLong(0x00);
         GSConstants.Reserved = new NativeLong(0x04);
         GSConstants.Reserved1 = new NativeLong(0x08);
         GSConstants.BUFFER_OPS = new NativeLong(0x0C);
-        //GSConstants.FW_REV = new NativeLong(0x10);
+        GSConstants.FW_REV = new NativeLong(0x10);
         GSConstants.AUTO_CAL = new NativeLong(0x14);
         GSConstants.OUTPUT_DATA_BUFFER = new NativeLong(0x18);
         GSConstants.BUFFER_SIZE = new NativeLong(0x1C);
@@ -355,6 +334,7 @@ public class GSSequencer {
 
     private void AutoCalibration()
     {
+        System.out.println("Autocalibrating the board");
         if(INSTANCE.AO64_66_Autocal(GSConstants.ulBdNum, GSConstants.ulError).intValue() != 1)
         {
             System.out.println("Autocal Failed");
