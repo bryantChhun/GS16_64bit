@@ -152,6 +152,7 @@ public class GSSequencer {
     {
         // is there a better way to check if Interrupt request flag is set?
         // We can query the BCR directly, and do bit math to check the values, but is this better?
+        // This will break if we allow the user to define his/her own interrupt flag.
         if (GSConstants.InterruptValue.intValue() == 0x04)
         {
             int targetTHRSHLD = getLongRegister(GSConstants.BUFFER_THRSHLD).intValue();
@@ -247,29 +248,35 @@ public class GSSequencer {
     }
 
     /**
-     * enable interrupt using established event handler
-     * @param value See table 3.6-1 for interrupt event selection. PUT TABLE HERE
+     * enable interrupt using established event handler(type)
+     * @param DeviceType Either 0 = LOCAL, or 1 = DMA.  Always use LOCAL
+     * @param InterruptValue Table 3.6-1 below:
      *
+     * Interrupt    Interrupt Event
+     * 0            Idle. Interrupt disabled unless initializing. Default state.
+     * 1            Autocalibration completed
+     * 2            Output buffer empty
+     * 3            Buffer threshold flag Low-to-High transition
+     * 4            Buffer threshold flag High-to-Low transition
+     * 5            Burst Trigger Ready
+     * 6            Load Ready (LOW-to-HIGH transition)
+     * 7            End Load Ready (HIGH-to-LOW transition of Load Ready)
      *
-     *
-     *
-     *
-     *
-     *              0x04 is for buffer thresh flag high-to-low.
      */
-    private void setEnableInterrupt(int type, int value) throws InterruptDeviceTypeException, InterruptValueException
+    private void setEnableInterrupt(int DeviceType, int InterruptValue) throws InterruptDeviceTypeException, InterruptValueException
     {
-        if (type!=0 && type!=1){
+        if (DeviceType!=0 && DeviceType!=1){
             throw new InterruptDeviceTypeException("Invalid interrupt device type: must be int 0 or 1");
         }
 
-        if (type==0 && (value<1 || value>7)){
+        if (DeviceType==0 && (InterruptValue<1 || InterruptValue>7)){
             throw new InterruptValueException("Invalid interrupt event value: must be 1 through 7");
-        } else if (type == 1 && (value!=0 && value!=1)){
+        } else if (DeviceType == 1 && (InterruptValue!=0 && InterruptValue!=1)){
             throw new InterruptValueException("Invalid interrupt event value: must be 0 or 1 for DMA interrupt");
         } else {
-            GSConstants.InterruptValue = new NativeLong(value);
-            GSConstants.InterruptType = new NativeLong(type);
+            //intentionally instantiate value and type here
+            GSConstants.InterruptValue = new NativeLong(InterruptValue);
+            GSConstants.InterruptType = new NativeLong(DeviceType);
             INSTANCE.AO64_66_EnableInterrupt(GSConstants.ulBdNum, GSConstants.InterruptValue, GSConstants.InterruptType, GSConstants.ulError);
         }
     }
@@ -319,6 +326,7 @@ public class GSSequencer {
      */
     private void openDMAChannel(int channel)
     {
+        //intentionally instantiate channel here
         GSConstants.ulChannel = new NativeLong(channel);
         INSTANCE.AO64_66_Open_DMA_Channel(GSConstants.ulBdNum, GSConstants.ulChannel, GSConstants.ulError);
     }

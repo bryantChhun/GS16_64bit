@@ -28,7 +28,7 @@ public class GSConstants {
     public static NativeLong InterruptType;
     public static NativeLong InterruptValue;
     public static NativeLong ulChannel;
-    //public static NativeLong ulWords;
+    public static NativeLong ulWords;
 
     /**
      * used by tests when board is not present for initialization

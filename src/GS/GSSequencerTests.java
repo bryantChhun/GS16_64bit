@@ -12,6 +12,8 @@ import java.util.ArrayDeque;
 public class GSSequencerTests {
 
     private GSBuffer bufferTest1;
+    private GSBuffer bufferTest2;
+    private GSBuffer bufferTest3;
 
     private GSSequencer sequencerTest;
 
@@ -48,10 +50,12 @@ public class GSSequencerTests {
         try {
             sequencerTest = new GSSequencer(65536, 50000);
         } catch (Exception ex) {fail(ex);}
+
         arrayData = new ArrayDeque<>();
 
         try{
             bufferTest1 = new GSBuffer(4096, 16);
+            bufferTest2 = new GSBuffer(4096, 16);
         } catch (Exception ex) {fail(ex);}
 
         continuousFunction(bufferTest1);
