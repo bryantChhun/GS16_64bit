@@ -56,9 +56,9 @@ public class GSBuffer {
         if ((maxSizeInBytes / 4) >= 256000) {
             throw new BufferTooLargeException(
                     "Requested buffer too large.  Reduce tps or num chans");
-        } else if ((maxSizeInBytes / 4) >= 192000 && (maxSizeInBytes / 4) < 256000) {
+        } else if ((maxSizeInBytes / 4) >= 128000 && (maxSizeInBytes / 4) < 256000) {
             throw new BufferTooLargeException(
-                    "Warning: Requested buffer > 3/4 max capacity");
+                    "Requested buffer too large: must be < 1/2 max capacity of 256k values");
         } else {
             buffer = ContiguousBuffer.allocate(maxSizeInBytes);
         }

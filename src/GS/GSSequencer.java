@@ -133,6 +133,30 @@ public class GSSequencer {
         BuffPtr.setPointer(bufferElement.getMemory().getJNAPointer().share(0));
         INSTANCE.AO64_66_DMA_Transfer(GSConstants.ulBdNum, GSConstants.ulChannel, GSConstants.ulWords, BuffPtr, GSConstants.ulError);
     }
+
+    private boolean checkDMAOccupancy()
+    {
+        NativeLong bufThrshld = new NativeLong(0x20);
+        NativeLong bufSize = new NativeLong(0x1C);
+        if (ulValue.intValue() == 0x04)
+        {
+            NativeLong targetTHRSHLD = new NativeLong(INSTANCE.AO64_66_Read_Local32(GSConstants.ulBdNum, GSConstants.ulError, bufThrshld).longValue());
+            NativeLong currentSize = new NativeLong(INSTANCE.AO64_66_Read_Local32(GSConstants.ulBdNum, GSConstants.ulError, bufSize).longValue());
+            if(currentSize.intValue() < targetTHRSHLD.intValue())
+            {
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            throw new DMAOccupancyException("")
+        }
+        //if threshold flag is set
+        //      read desired threshold level, (read threshold flag?)
+        //      read current DMA occupancy
+        //      warn if occupancy is below threshold level
+
+    }
     
     /**
      * Set the desired sampling rate.
