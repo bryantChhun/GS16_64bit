@@ -37,12 +37,7 @@ public class GSSequencer {
     private HANDLE myHandle = new HANDLE();
     private DWORD EventStatus = new DWORD();
     private NativeLong ulValue;
-    NativeLongByReference BuffPtr = new NativeLongByReference();
-
-    // to do:
-    //      diff constructors for different thresholds/sample rates?
-    //      buffer size checks
-
+    private NativeLongByReference BuffPtr = new NativeLongByReference();
 
     /**
      * constructor establishes communication with board
@@ -52,8 +47,14 @@ public class GSSequencer {
      *  3) Initialize
      *  4) Autocalibrate only ONCE per day or computer restart.
      */
-    GSSequencer(int num_threshold_values, int sample_rate)
+    GSSequencer(int num_threshold_values, int sample_rate) throws InvalidBoardParams
     {
+        if(num_threshold_values < 0 || num_threshold_values > 256000 || sample_rate > 500000){
+            throw new InvalidBoardParams(
+                    "Threshold value out of range, or Sample rate too high"
+            );
+        }
+
         INSTANCE = AO64_64b_Driver_CLibrary.INSTANCE;
 
         GSConstants.ulBdNum = new NativeLong(1);
@@ -69,19 +70,15 @@ public class GSSequencer {
         setBufferThreshold(num_threshold_values);
         setSampleRate(sample_rate);
 
-
     }
 
     /**
-     * Play sends list of GSBuffer to tail of LinkedList AND starts the clock, if not already started
-     * Play streams head of LinkedList into GSDAC card's DMA, if DMA threshold flag bit is low.
-     * Reading from LinkedList head and writing to tail need to be asynchronous.
-     *      The approach above allows one to write a unlimited amount of data to the outputs
-     *      you won't need to wait for buffer threshold to drop, or for play to return before writing next chunk
-     *      ** not necessary if this mechanism is already implemented in ClearControl...?
+     * Sends head of ArrayDeque list to buffers
+     *      Event Handlers, Interrupts, Interrupt notification are used to monitor threshold event
+     *      prefill buffer writes values to buffer before starting clock (might not be necessary)
      *
-     * @param data
-     * @return
+     * @param data ArrayDeque of GSBuffers.  Buffers constructed using CoreMem Contiguous Buffer
+     * @return true when done playing
      */
     public boolean play(ArrayDeque<GSBuffer> data)
     {
@@ -89,15 +86,15 @@ public class GSSequencer {
             setEventHandlers();
             setEnableInterrupt(0, 0x04);
             setInterruptNotification();
-        } catch (Exception ex) {}
+        } catch (Exception ex) {System.out.println(ex);}
 
         connectOutputs();
         openDMAChannel(1);
 
-        sendDMABuffer(data.remove());
-        sendDMABuffer(data.remove());
+        // ====================================
+        prefillBuffer(data);
+        // ====================================
 
-        // check here to compare current DMA occupancy vs threshold, if threshold flag is high-low
         startClock();
 
         NativeLong register = new NativeLong(0x1C);
@@ -109,7 +106,10 @@ public class GSSequencer {
             switch(EventStatus.intValue()) {
                 case 0x00://wait_object_0, object is signaled;
                     System.out.println(" object signaled ... writing to outputs");
-                    sendDMABuffer(data.remove());
+                    if( checkDMAOverflow(data.peek()) ){
+                        sendDMABuffer(data.peek(), data.peek().getValsWritten());
+                        data.remove();
+                    }
                     break;
                 case 0x80://wait abandoned;
                     System.out.println(" Error ... Wait abandoned");
@@ -127,14 +127,27 @@ public class GSSequencer {
         return true;
     }
 
-    private void sendDMABuffer(GSBuffer bufferElement)
+    /**
+     * Writes to DMA buffer a JNAPointer to Coremem buffer.
+     *  Also specifies number of words to write from this buffer.
+     * @param bufferElement A single GSBuffer block
+     * @param words the number of values written to the block.  This is different from the size of the block.
+     */
+    private void sendDMABuffer(GSBuffer bufferElement, int words)
     {
-        GSConstants.ulWords = new NativeLong(0x10000);
+        GSConstants.ulWords = new NativeLong(words);
         BuffPtr.setPointer(bufferElement.getMemory().getJNAPointer().share(0));
         INSTANCE.AO64_66_DMA_Transfer(GSConstants.ulBdNum, GSConstants.ulChannel, GSConstants.ulWords, BuffPtr, GSConstants.ulError);
     }
 
-    private boolean checkDMAOccupancy()
+    /**
+     * Queries the GSDAC board for target buffer threshold anc current buffer size
+     *      Requires that Interrupt event, Buffer Threshold high-low is enabled.
+     *      Used ONLY during buffer prefill initialization
+     * @return False if below threshold, true if above.
+     * @throws DMAOccupancyException thrown if DMA high-low thresh is not set
+     */
+    private boolean checkDMAThreshSatisfied() throws DMAOccupancyException
     {
         NativeLong bufThrshld = new NativeLong(0x20);
         NativeLong bufSize = new NativeLong(0x1C);
@@ -149,12 +162,52 @@ public class GSSequencer {
                 return true;
             }
         } else {
-            throw new DMAOccupancyException("")
+            throw new DMAOccupancyException(
+                    "DMA threshold interruption not set"
+            );
         }
-        //if threshold flag is set
-        //      read desired threshold level, (read threshold flag?)
-        //      read current DMA occupancy
-        //      warn if occupancy is below threshold level
+    }
+
+    /**
+     * check whether writing the next entry in the GSBuffer queue will fill the DMA to max
+     * @param nextBufferEntry GSBuffer object received from ArrayDeque
+     * @return false if DMA will overflow.  True if OK to write.
+     */
+    private boolean checkDMAOverflow(GSBuffer nextBufferEntry)
+    {
+        if(nextBufferEntry == null) {return false;}
+
+        NativeLong buffer_size_register= new NativeLong(0x1C);
+        int nextBufferSize = nextBufferEntry.getValsWritten();
+        int currentSize = INSTANCE.AO64_66_Read_Local32(GSConstants.ulBdNum, GSConstants.ulError, buffer_size_register).intValue();
+        if(currentSize + nextBufferSize > 256000){
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * DMA initialization method to fill buffer before clock is started
+     *      Continually writes next buffer entry if
+     * @param buffer Entire ArrayDeque of GSBuffers
+     */
+    private void prefillBuffer(ArrayDeque<GSBuffer> buffer)
+    {
+        try{
+            boolean checkThresh = checkDMAThreshSatisfied();
+            do {
+                if ( !checkThresh && checkDMAOverflow(buffer.peek()) ) {
+                    sendDMABuffer(buffer.peek(), buffer.peek().getValsWritten());
+                    buffer.remove();
+                } else{
+                    System.out.println("WARNING: next buffer value will overflow DMA");
+                    break;
+                }
+                checkThresh = checkDMAThreshSatisfied();
+            } while (!checkThresh);
+
+        } catch (Exception ex) {System.out.println(ex);}
 
     }
     
@@ -173,7 +226,7 @@ public class GSSequencer {
 
     /**
      * Threshold number of values that triggers a buffer threshold flag interruption event
-     * @param numValues
+     * @param numValues Buffer takes maximum 256k values
      */
     private void setBufferThreshold(int numValues)
     {
@@ -210,14 +263,16 @@ public class GSSequencer {
             throw new InterruptValueException("Invalid interrupt event value: must be 1 through 7");
         } else if (type == 1 && (value!=0 && value!=1)){
             throw new InterruptValueException("Invalid interrupt event value: must be 0 or 1 for DMA interrupt");
-        } else
-        {
+        } else {
             ulValue = new NativeLong(value);
             GSConstants.InterruptType = new NativeLong(type);
             INSTANCE.AO64_66_EnableInterrupt(GSConstants.ulBdNum, ulValue, GSConstants.InterruptType, GSConstants.ulError);
         }
     }
 
+    /**
+     * disable most recently enabled interrupt (determined by ulValue)
+     */
     private void setDisableInterrupt()
     {
         INSTANCE.AO64_66_DisableInterrupt(GSConstants.ulBdNum, ulValue, GSConstants.InterruptType, GSConstants.ulError);
@@ -254,6 +309,10 @@ public class GSSequencer {
         INSTANCE.AO64_66_Disable_Clock(GSConstants.ulBdNum, GSConstants.ulError);
     }
 
+    /**
+     * Only two DMA channels.  We hard set this to 1
+     * @param channel 1 or 0
+     */
     private void openDMAChannel(int channel)
     {
         GSConstants.ulChannel = new NativeLong(channel);
@@ -275,12 +334,10 @@ public class GSSequencer {
         closeHandle();
     }
 
-
-    private NativeLong getHandle()
-    {
-        return INSTANCE.AO64_66_Get_Handle(GSConstants.ulError, GSConstants.ulBdNum);
-    }
-
+    /**
+     * Return value never used but "FindBoards" must be called for board initialization
+     * @return number of boards found.  We have only one.
+     */
     private NativeLong findBoards()
     {
         Memory p = new Memory(69);
@@ -298,6 +355,19 @@ public class GSSequencer {
         return out;
     }
 
+    /**
+     * Return value is never used but "get_handle" must be called for board initialization
+     * @return board handle
+     */
+    private NativeLong getHandle()
+    {
+        return INSTANCE.AO64_66_Get_Handle(GSConstants.ulError, GSConstants.ulBdNum);
+    }
+
+    /**
+     * Not explicitly required for board initialization,
+     *      but sets values for GSConstants class that are critical for operation.
+     */
     private void setBoardParams()
     {
         GSConstants.numChan = new NativeLong();
@@ -318,15 +388,16 @@ public class GSSequencer {
             GSConstants.id_off.setValue(24);
             GSConstants.eog.setValue(30);
             GSConstants.eof.setValue(31);
-        }
-        else{
+        } else{
             GSConstants.id_off.setValue(16);
             GSConstants.eog.setValue(22);
             GSConstants.eof.setValue(23);
         }
+
         if((GSConstants.ValueRead.intValue() & 0x1000000) == 0x00){
             GSConstants.disconnect.setValue(1);
         }
+
         // Example uses the below to reset outputs to midscale
         GSConstants.ReadValue = new NativeLong[16385];
         for(int i = 0; i<GSConstants.numChan.intValue(); i++){
@@ -339,6 +410,10 @@ public class GSSequencer {
         System.out.println("eof : ....... : " + GSConstants.eof);
     }
 
+    /**
+     * Required for board Initialization.
+     * Sets values in GSConstants class that are critical for operation
+     */
     private void InitializeBoard()
     {
         System.out.println("Initializing Board");
@@ -356,6 +431,10 @@ public class GSSequencer {
         GSConstants.RATE_B = new NativeLong(0x28);
     }
 
+    /**
+     * Necessary for board Initialization
+     *      Need only be run ONCE when computer is restarted or loads on outputs change substantially.
+     */
     private void AutoCalibration()
     {
         System.out.println("Autocalibrating the board");
@@ -368,6 +447,9 @@ public class GSSequencer {
         }
     }
 
+    /**
+     * Flips "Disconnect outputs" bit to LOW in the BCR
+     */
     private static void connectOutputs()
     {
         if(GSConstants.disconnect.equals(0)){

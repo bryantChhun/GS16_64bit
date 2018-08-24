@@ -258,10 +258,7 @@ public class GSBuffer {
      * get total number of values written
      * @return integer number of values
      */
-    public int getValsWritten()
-    {
-        return valsWritten;
-    }
+    public int getValsWritten() { return valsWritten; }
 
     /**
      * get allocated size of this buffer

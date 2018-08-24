@@ -20,6 +20,9 @@ public class GSSequencerTests {
 
     private ArrayDeque<GSBuffer> arrayData;
 
+    /**
+     * simple initialization test
+     */
     @Test
     void GSSequencer_initialize()
     {
@@ -30,9 +33,20 @@ public class GSSequencerTests {
     }
 
     @Test
+    void GSSequencer_testInitRange()
+    {
+
+    }
+
+    /**
+     * create array of 10 GSbuffers, test threshold triggering
+     */
+    @Test
     void GSSequencer_simpleSequence()
     {
-        sequencerTest = new GSSequencer(65536, 50000);
+        try {
+            sequencerTest = new GSSequencer(65536, 50000);
+        } catch (Exception ex) {fail(ex);}
         arrayData = new ArrayDeque<>();
 
         try{
