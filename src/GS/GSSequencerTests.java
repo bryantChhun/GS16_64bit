@@ -1,6 +1,7 @@
 package GS;
 
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -26,42 +27,44 @@ public class GSSequencerTests {
      * simple initialization test
      */
     @Test
-    void GSSequencer_testInitialize()
-    {
-        try{
-            sequencerTest = new GSSequencer(65536, 50000);
-            bufferTest1 = new GSBuffer(1000, 32);
-        } catch (Exception ex) {fail(ex);}
-    }
-
-    @Test
-    void GSSequencer_testInitRange()
-    {
-        assertThrows(InvalidBoardParams.class, () -> new GSSequencer(-1, 50000 ));
-        assertThrows(InvalidBoardParams.class, () -> new GSSequencer(0, 50000 ));
-        assertThrows(InvalidBoardParams.class, () -> new GSSequencer(500000, 50000 ));
-        assertThrows(InvalidBoardParams.class, () -> new GSSequencer(65536, 0 ));
-        assertThrows(InvalidBoardParams.class, () -> new GSSequencer(65536, 500001 ));
-    }
-
-    @Test
-    void GSSequencer_testPreFillRange()
-    {
+    void GSSequencer_testInitialize() {
         try {
             sequencerTest = new GSSequencer(65536, 50000);
-        } catch (Exception ex) {fail(ex);}
+            bufferTest1 = new GSBuffer(1000, 32);
+        } catch (Exception ex) {
+            fail(ex);
+        }
+    }
+
+    @Test
+    void GSSequencer_testInitRange() {
+        assertThrows(InvalidBoardParams.class, () -> new GSSequencer(-1, 50000));
+        assertThrows(InvalidBoardParams.class, () -> new GSSequencer(0, 50000));
+        assertThrows(InvalidBoardParams.class, () -> new GSSequencer(500000, 50000));
+        assertThrows(InvalidBoardParams.class, () -> new GSSequencer(65536, 0));
+        assertThrows(InvalidBoardParams.class, () -> new GSSequencer(65536, 500001));
+    }
+
+    @Test
+    void GSSequencer_testPreFillRange() {
+        try {
+            sequencerTest = new GSSequencer(65536, 50000);
+        } catch (Exception ex) {
+            fail(ex);
+        }
 
         arrayData = new ArrayDeque<>();
 
-        try{
+        try {
             bufferTest1 = new GSBuffer(4096, 16);
             bufferTest2 = new GSBuffer(4096, 16);
-        } catch (Exception ex) {fail(ex);}
+        } catch (Exception ex) {
+            fail(ex);
+        }
 
-        continuousFunction(bufferTest1);
+        continuousSineFunction(bufferTest1);
 
-        for (int i = 0; i<10; i++)
-        {
+        for (int i = 0; i < 10; i++) {
             arrayData.push(bufferTest1);
         }
 
@@ -70,31 +73,37 @@ public class GSSequencerTests {
         // two buffers with too high values (such that only one is written, and leaves thresh low)
     }
 
-    @Test GSSequencer_testArrayDeque()
-    {
-        // null entries
-        // entries with variable amount of values written
-    }
+//    @Test GSSequencer_testArrayDeque()
+//    {
+//        // null entries
+//        // entries with variable amount of values written
+//    }
 
     /**
      * create array of 10 GSbuffers, test threshold triggering
      */
     @Test
-    void GSSequencer_testSimpleSequence()
-    {
+    void GSSequencer_testSimpleSequence() {
         try {
             sequencerTest = new GSSequencer(65536, 50000);
-        } catch (Exception ex) {fail(ex);}
+        } catch (Exception ex) {
+            fail(ex);
+        }
         arrayData = new ArrayDeque<>();
 
-        try{
+        try {
             bufferTest1 = new GSBuffer(4096, 16);
-        } catch (Exception ex) {fail(ex);}
+        } catch (Exception ex) {
+            fail(ex);
+        }
 
-        continuousFunction(bufferTest1);
 
-        for (int i = 0; i<10; i++)
-        {
+        // Bryant: I played a bit with your code, fun! I wrote some other functions: ramp, sinus...
+        // Turns out that the sinus function looks really weird on the oscilloscope... I think it has
+        // to do with the interpretation of the values...
+        continuousSineFunction(bufferTest1);
+
+        for (int i = 0; i < 10; i++) {
             arrayData.push(bufferTest1);
         }
 
@@ -104,33 +113,84 @@ public class GSSequencerTests {
 
     /**
      * For simple function generation, for testing
+     *
      * @param data memory allocated from GSBuffer
      */
-    private void continuousFunction(GSBuffer data)
-    {
+    private void continuousStepFunction(GSBuffer data) {
         int numTP = 4096;
-        for(int loop=0; loop<numTP; loop++)
-        {
-            if(loop%2 == 0) {
+        for (int loop = 0; loop < numTP; loop++) {
+            if (loop % 2 == 0) {
                 try {
                     for (int i = 0; i < 16; i++) {
                         data.appendValue(0.25, i);
                     }
                     data.appendEndofTP();
-                } catch (Exception ex) {fail(ex);}
+                } catch (Exception ex) {
+                    fail(ex);
+                }
             } else {
                 try {
                     for (int i = 0; i < 16; i++) {
                         data.appendValue(0.75, i);
                     }
                     data.appendEndofTP();
-                } catch (Exception ex) {fail(ex);}
+                } catch (Exception ex) {
+                    fail(ex);
+                }
             }
         } // end for loop
 
         try {
             data.appendEndofFunction();
-        } catch (Exception ex) {fail(ex);}
+        } catch (Exception ex) {
+            fail(ex);
+        }
+    }
+
+    /**
+     * For simple function generation, for testing
+     *
+     * @param data memory allocated from GSBuffer
+     */
+    private void continuousSineFunction(GSBuffer data) {
+        int numTP = 4096;
+        try {
+            for (int loop = 0; loop < numTP; loop++) {
+                for (int i = 0; i < 16; i++) {
+
+                    float value = (float) Math.sin(0.001*loop+0.0001*i);
+                    data.appendValue(value, i);
+                }
+                data.appendEndofTP();
+            } // end for loop
+            data.appendEndofFunction();
+
+        } catch (Exception ex) {
+            fail(ex);
+        }
+    }
+
+    /**
+     * For simple function generation, for testing
+     *
+     * @param data memory allocated from GSBuffer
+     */
+    private void continuousRampFunction(GSBuffer data) {
+        int numTP = 4096;
+        try {
+            for (int loop = 0; loop < numTP; loop++) {
+                for (int i = 0; i < 16; i++) {
+
+                    float value = (float) (((1.0/numTP)*loop+0.00001*i)%1);
+                    data.appendValue(value, i);
+                }
+                data.appendEndofTP();
+            } // end for loop
+            data.appendEndofFunction();
+
+        } catch (Exception ex) {
+            fail(ex);
+        }
     }
 
 }

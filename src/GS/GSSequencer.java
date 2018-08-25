@@ -150,16 +150,18 @@ public class GSSequencer {
      */
     private boolean checkDMAThreshSatisfied() throws DMAOccupancyException
     {
-        // is there a better way to check if Interrupt request flag is set?
-        // We can query the BCR directly, and do bit math to check the values, but is this better?
         // This will break if we allow the user to define his/her own interrupt flag.
         if (GSConstants.InterruptValue.intValue() == 0x04)
         {
             int targetTHRSHLD = getLongRegister(GSConstants.BUFFER_THRSHLD).intValue();
             int currentSize = getLongRegister(GSConstants.BUFFER_SIZE).intValue();
-            if(currentSize < targetTHRSHLD) {
+            println("   targetThsld = "+targetTHRSHLD);
+            println("   currentSize = "+currentSize);
+            if(currentSize <= targetTHRSHLD) {
+                // not satisfied
                 return false;
             } else {
+                //satisfied
                 return true;
             }
         } else {
@@ -179,9 +181,13 @@ public class GSSequencer {
 
         int nextBufferSize = nextBufferEntry.getValsWritten();
         int currentSize = getLongRegister(GSConstants.BUFFER_SIZE).intValue();
+        println("   nextBuff = "+nextBufferSize);
+        println("   currentSize = "+currentSize);
         if(currentSize + nextBufferSize > 256000){
+            //will overflow
             return false;
         } else {
+            //will not overflow
             return true;
         }
     }
@@ -194,9 +200,13 @@ public class GSSequencer {
     private void prefillBuffer(ArrayDeque<GSBuffer> buffer)
     {
         try{
-            boolean checkThresh = checkDMAThreshSatisfied();
             do {
-                if ( !checkThresh && checkDMAOverflow(buffer.peek()) ) {
+                println("\n");
+                boolean checkThresh = checkDMAThreshSatisfied();
+                boolean dmaOverflow = checkDMAOverflow(buffer.peek());
+                println("start do loop checkThresh = "+checkThresh);
+                println("DMA Overflow = "+checkDMAOverflow(buffer.peek()));
+                if ( !checkThresh && dmaOverflow ) {
                     sendDMABuffer(buffer.peek(), buffer.peek().getValsWritten());
                     buffer.remove();
                 } else{
@@ -204,7 +214,8 @@ public class GSSequencer {
                     break;
                 }
                 checkThresh = checkDMAThreshSatisfied();
-            } while (!checkThresh);
+                println("end do loop checkThresh = "+checkThresh);
+            } while (!checkDMAThreshSatisfied());
 
         } catch (Exception ex) {System.out.println(ex);}
 
@@ -230,7 +241,8 @@ public class GSSequencer {
     private void setBufferThreshold(int numValues)
     {
         System.out.println("setting buffer threshold = "+numValues);
-        setLongRegister(GSConstants.BUFFER_THRSHLD, new NativeLong(numValues));
+        NativeLong val = new NativeLong(numValues);
+        setLongRegister(GSConstants.BUFFER_THRSHLD, val );
     }
 
     /**
