@@ -37,6 +37,7 @@ public class GSSequencer {
     private HANDLE myHandle = new HANDLE();
     private DWORD EventStatus = new DWORD();
     private NativeLongByReference BuffPtr = new NativeLongByReference();
+    private int target_thresh_values;
 
     /**
      * constructor establishes communication with board
@@ -48,12 +49,18 @@ public class GSSequencer {
      */
     GSSequencer(int num_threshold_values, int sample_rate) throws InvalidBoardParams
     {
-        this(num_threshold_values,sample_rate,false);
+        this(num_threshold_values,sample_rate,false, true);
     }
 
     GSSequencer(int num_threshold_values, int sample_rate, boolean runAutoCal) throws InvalidBoardParams
     {
-        if(num_threshold_values < 0 || num_threshold_values > 256000 || sample_rate > 500000 || sample_rate < 1){
+        this(num_threshold_values,sample_rate,runAutoCal, true);
+    }
+
+    GSSequencer(int num_threshold_values, int sample_rate, boolean runAutoCal, boolean twosComplement) throws InvalidBoardParams
+    {
+        target_thresh_values = num_threshold_values;
+        if(target_thresh_values < 0 || target_thresh_values > 256000 || sample_rate > 500000 || sample_rate < 1){
             throw new InvalidBoardParams(
                     "Threshold value out of range, or Sample rate out of range");
         }
@@ -71,8 +78,11 @@ public class GSSequencer {
         if(runAutoCal) {
             AutoCalibration();
         }
+        if(twosComplement){
+            TwosComplement();
+        }
 
-        setBufferThreshold(num_threshold_values);
+        setBufferThreshold(target_thresh_values);
         setSampleRate(sample_rate);
 
     }
@@ -153,7 +163,8 @@ public class GSSequencer {
         // This will break if we allow the user to define his/her own interrupt flag.
         if (GSConstants.InterruptValue.intValue() == 0x04)
         {
-            int targetTHRSHLD = getLongRegister(GSConstants.BUFFER_THRSHLD).intValue();
+            //int targetTHRSHLD = getLongRegister(GSConstants.BUFFER_THRSHLD).intValue();
+            int targetTHRSHLD = this.target_thresh_values;
             int currentSize = getLongRegister(GSConstants.BUFFER_SIZE).intValue();
             println("   targetThsld = "+targetTHRSHLD);
             println("   currentSize = "+currentSize);
@@ -463,6 +474,21 @@ public class GSSequencer {
     }
 
     /**
+     *
+     */
+    private void TwosComplement()
+    {
+        int bcrValue = INSTANCE.AO64_66_Read_Local32(GSConstants.ulBdNum, GSConstants.ulError, GSConstants.BCR).intValue();
+        if(((bcrValue>>4) & 1) == 1);
+        {
+            //flag is set high, must flip
+            bcrValue &= ~0x10;
+            NativeLong newValue = new NativeLong(bcrValue);
+            INSTANCE.AO64_66_Write_Local32(GSConstants.ulBdNum, GSConstants.ulError, GSConstants.BCR, newValue);
+        } //else do nothing
+    }
+
+    /**
      * Flips "Disconnect outputs" bit to LOW in the BCR
      */
     private static void connectOutputs()
@@ -499,7 +525,7 @@ public class GSSequencer {
     }
 
     private void println(String writing_to_outputs_now) {
-        System.out.println(writing_to_outputs_now);
+        //System.out.println(writing_to_outputs_now);
     }
 
     /**

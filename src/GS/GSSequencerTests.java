@@ -79,6 +79,30 @@ public class GSSequencerTests {
 //        // entries with variable amount of values written
 //    }
 
+    @Test
+    void GSSequencer_resetOutputs(){
+        try {
+            sequencerTest = new GSSequencer(65536, 50000);
+        } catch (Exception ex) {
+            fail(ex);
+        }
+
+        arrayData = new ArrayDeque<>();
+
+        try {
+            bufferTest1 = new GSBuffer(5, 64);
+            for (int i = 0; i < 64; i++) {
+                bufferTest1.appendValue(0, i);
+                bufferTest1.appendEndofTP();
+            }
+            bufferTest1.appendEndofFunction();
+            arrayData.push(bufferTest1);
+        } catch (Exception ex) {
+            fail(ex);
+        }
+
+    }
+
     /**
      * create array of 10 GSbuffers, test threshold triggering
      */
@@ -89,6 +113,7 @@ public class GSSequencerTests {
         } catch (Exception ex) {
             fail(ex);
         }
+
         arrayData = new ArrayDeque<>();
 
         try {
@@ -101,9 +126,11 @@ public class GSSequencerTests {
         // Bryant: I played a bit with your code, fun! I wrote some other functions: ramp, sinus...
         // Turns out that the sinus function looks really weird on the oscilloscope... I think it has
         // to do with the interpretation of the values...
-        continuousSineFunction(bufferTest1);
+        //continuousSineFunction(bufferTest1);
+        continuousStepFunction(bufferTest1);
+        //continuousRampFunction2(bufferTest1);
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 1000; i++) {
             arrayData.push(bufferTest1);
         }
 
@@ -122,8 +149,9 @@ public class GSSequencerTests {
             if (loop % 2 == 0) {
                 try {
                     for (int i = 0; i < 16; i++) {
-                        data.appendValue(0.25, i);
+                        data.appendValue(-.01, i);
                     }
+                    //System.out.println(data.getLastValue());
                     data.appendEndofTP();
                 } catch (Exception ex) {
                     fail(ex);
@@ -131,8 +159,9 @@ public class GSSequencerTests {
             } else {
                 try {
                     for (int i = 0; i < 16; i++) {
-                        data.appendValue(0.75, i);
+                        data.appendValue(0, i);
                     }
+                    //System.out.println(data.getLastValue());
                     data.appendEndofTP();
                 } catch (Exception ex) {
                     fail(ex);
@@ -155,12 +184,12 @@ public class GSSequencerTests {
     private void continuousSineFunction(GSBuffer data) {
         int numTP = 4096;
         try {
+            data.appendValue(1, 0);
+            data.appendValue(-1, 1);
             for (int loop = 0; loop < numTP; loop++) {
-                for (int i = 0; i < 16; i++) {
-
-                    float value = (float) Math.sin(0.001*loop+0.0001*i);
-                    data.appendValue(value, i);
-                }
+                //float value = (float) Math.sin(0.001*loop+0.0001*i);
+                float value = (float) Math.sin(0.001*loop);
+                data.appendValue(value, 2);
                 data.appendEndofTP();
             } // end for loop
             data.appendEndofFunction();
@@ -184,6 +213,24 @@ public class GSSequencerTests {
                     float value = (float) (((1.0/numTP)*loop+0.00001*i)%1);
                     data.appendValue(value, i);
                 }
+                data.appendEndofTP();
+            } // end for loop
+            data.appendEndofFunction();
+
+        } catch (Exception ex) {
+            fail(ex);
+        }
+    }
+
+
+    private void continuousRampFunction2(GSBuffer data) {
+        int numTP = 1000;
+        try {
+            for (int loop = 0; loop < numTP; loop++) {
+                float value = (float) (((-1.0/numTP)*loop)%1);
+                System.out.println(value);
+                data.appendValue(value, 0);
+                //System.out.println(data.getLastValue());
                 data.appendEndofTP();
             } // end for loop
             data.appendEndofFunction();
