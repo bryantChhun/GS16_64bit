@@ -1,4 +1,4 @@
-package GS;
+package GSExceptions;
 
 public class InterruptDeviceTypeException extends Exception {
 

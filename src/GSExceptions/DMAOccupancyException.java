@@ -1,4 +1,4 @@
-package GS;
+package GSExceptions;
 
 public class DMAOccupancyException extends Exception {
 

@@ -1,4 +1,4 @@
-package GS;
+package GSExceptions;
 
 public class InterruptValueException extends Exception {
 
