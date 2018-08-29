@@ -18,17 +18,10 @@ import java.util.ArrayDeque;
 
 /**
  * for continuous function, this is the order of operations:
- * 1) init board
- * 2) set sample rate
- * 3) autocalibration
- * 4) set buffer threshold
- * 5) define constants:  event(notifyobject), dwords, ulchannel = dmaChannel
- *          ulWords = #words to write!
- *          buffer pointer
- *    define fields:    public final pointer data, handle myhandle
- *
- * 6) define data parameters:
- *          -
+ * 1) construct a GS Sequencer
+ * 2) construct a GS Buffer
+ * 3) write function to buffer using primarily "appendValue" and "appendEndofTP", "appendEndofFunction"
+ * 4) 
  */
 public class GSSequencer {
 
