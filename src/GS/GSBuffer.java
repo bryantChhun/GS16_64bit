@@ -2,6 +2,7 @@ package GS;
 
 import java.util.*;
 
+import GSExceptions.*;
 import constants.GSConstants;
 import coremem.ContiguousMemoryInterface;
 import coremem.buffers.ContiguousBuffer;

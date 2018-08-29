@@ -1,5 +1,6 @@
 package GS;
 
+import GSExceptions.*;
 import bindings.AO64_64b_Driver_CLibrary;
 import bindings.GS_NOTIFY_OBJECT;
 import com.sun.jna.Memory;
@@ -47,22 +48,25 @@ public class GSSequencer {
      *  3) Initialize
      *  4) Autocalibrate only ONCE per day or computer restart.
      */
-    GSSequencer(int num_threshold_values, int sample_rate) throws InvalidBoardParams
+    GSSequencer(int num_threshold_values, int sample_rate) throws InvalidBoardParamsException
     {
         this(num_threshold_values,sample_rate,false, true);
     }
 
-    GSSequencer(int num_threshold_values, int sample_rate, boolean runAutoCal) throws InvalidBoardParams
+    GSSequencer(int num_threshold_values, int sample_rate, boolean runAutoCal) throws InvalidBoardParamsException
     {
         this(num_threshold_values,sample_rate,runAutoCal, true);
     }
 
-    GSSequencer(int num_threshold_values, int sample_rate, boolean runAutoCal, boolean twosComplement) throws InvalidBoardParams
+    GSSequencer(int num_threshold_values, int sample_rate, boolean runAutoCal, boolean twosComplement) throws InvalidBoardParamsException
     {
         target_thresh_values = num_threshold_values;
         if(target_thresh_values < 0 || target_thresh_values > 256000 || sample_rate > 500000 || sample_rate < 1){
-            throw new InvalidBoardParams(
+            throw new InvalidBoardParamsException(
                     "Threshold value out of range, or Sample rate out of range");
+        }
+        if(sample_rate > 450000){
+            throw new InvalidBoardParamsException("Sample rate too high.  Unpredictable behavior close to 500ksps");
         }
 
         INSTANCE = AO64_64b_Driver_CLibrary.INSTANCE;
@@ -88,14 +92,14 @@ public class GSSequencer {
     }
 
     /**
-     * Sends head of ArrayDeque list to buffers
+     * Sends head of ArrayDeque list to buffers until list is empty
      *      Event Handlers, Interrupts, Interrupt notification are used to monitor threshold event
      *      prefill buffer writes values to buffer before starting clock (might not be necessary)
      *
      * @param data ArrayDeque of GSBuffers.  Buffers constructed using CoreMem Contiguous Buffer
      * @return true when done playing
      */
-    public boolean play(ArrayDeque<GSBuffer> data)
+    public boolean play(ArrayDeque<GSBuffer> data, int wait_for_trigger_milliseconds)
     {
         try{
             setEventHandlers();
@@ -113,12 +117,12 @@ public class GSSequencer {
         println("writing to outputs now");
         while(!data.isEmpty())
         {
-            EventStatus.setValue(Kernel32.INSTANCE.WaitForSingleObject(myHandle, 1));
+            EventStatus.setValue(Kernel32.INSTANCE.WaitForSingleObject(myHandle, wait_for_trigger_milliseconds));
             println("buffer size before switch = "+ getLongRegister(GSConstants.BUFFER_SIZE).toString());
             switch(EventStatus.intValue()) {
                 case 0x00://wait_object_0, object is signaled;
                     println(" object signaled ... writing to outputs");
-                    if( checkDMAOverflow(data.peek()) ){
+                    if( !checkDMAOverflow(data.peek()) ){
                         sendDMABuffer(data.peek(), data.peek().getValsWritten());
                         data.remove();
                     }
@@ -168,13 +172,8 @@ public class GSSequencer {
             int currentSize = getLongRegister(GSConstants.BUFFER_SIZE).intValue();
             println("   targetThsld = "+targetTHRSHLD);
             println("   currentSize = "+currentSize);
-            if(currentSize <= targetTHRSHLD) {
-                // not satisfied
-                return false;
-            } else {
-                //satisfied
-                return true;
-            }
+            // True = Threshold satisfied, False = still under threshold
+            return(currentSize > targetTHRSHLD);
         } else {
             throw new DMAOccupancyException(
                     "DMA threshold interruption not set");
@@ -194,18 +193,14 @@ public class GSSequencer {
         int currentSize = getLongRegister(GSConstants.BUFFER_SIZE).intValue();
         println("   nextBuff = "+nextBufferSize);
         println("   currentSize = "+currentSize);
-        if(currentSize + nextBufferSize > 256000){
-            //will overflow
-            return false;
-        } else {
-            //will not overflow
-            return true;
-        }
+        // true=WILL overflow, false=WILL NOT overflow
+        return(currentSize + nextBufferSize > 256000);
     }
 
     /**
      * DMA initialization method to fill buffer before clock is started
-     *      Continually writes next buffer entry if
+     *      Continually writes next BufferArray entry if DMAbuffer is below threshold
+     *      If DMABuffer will overflow, or if BufferArrray is empty, will exit loop and allow operation
      * @param buffer Entire ArrayDeque of GSBuffers
      */
     private void prefillBuffer(ArrayDeque<GSBuffer> buffer)
@@ -217,12 +212,21 @@ public class GSSequencer {
                 boolean dmaOverflow = checkDMAOverflow(buffer.peek());
                 println("start do loop checkThresh = "+checkThresh);
                 println("DMA Overflow = "+checkDMAOverflow(buffer.peek()));
-                if ( !checkThresh && dmaOverflow ) {
+                println("buffer is empty = "+buffer.isEmpty());
+                if (!checkThresh && !dmaOverflow && buffer.isEmpty()) {
+                    // under thresh, will not overflow, no more values to write
+                    System.out.println("WARNING: not enough values to trigger threshold");
+                    break;
+                } else if ( !checkThresh && !dmaOverflow ) {
+                    // under thresh, will not overflow
                     sendDMABuffer(buffer.peek(), buffer.peek().getValsWritten());
                     buffer.remove();
-                } else{
+                } else if (!checkThresh && dmaOverflow) {
+                    // under thresh, will overflow
                     System.out.println("WARNING: next buffer value will overflow DMA");
                     break;
+                } else {
+                    continue;
                 }
                 checkThresh = checkDMAThreshSatisfied();
                 println("end do loop checkThresh = "+checkThresh);
@@ -354,6 +358,9 @@ public class GSSequencer {
         INSTANCE.AO64_66_Open_DMA_Channel(GSConstants.ulBdNum, GSConstants.ulChannel, GSConstants.ulError);
     }
 
+    /**
+     * Close active DMA channel.  Value set by GSConstants.ulChannel is closed.
+     */
     private void closeDMAChannel()
     {
         INSTANCE.AO64_66_Close_DMA_Channel(GSConstants.ulBdNum, GSConstants.ulChannel, GSConstants.ulError);
@@ -474,7 +481,16 @@ public class GSSequencer {
     }
 
     /**
+     * The default output data coding is "OffsetBinary".  We want to use "twos complement"
+     *  this flag in the constructor will flip the control bit HIGH, enabling
      *
+     * Analog Output Level                  Offset Binary       Two-s Complement
+     * Positive Full Scale minus 1 LSB      XXXX FFFF           XXXX 7FFF
+     * Zero plus 1 LSB                      XXXX 8001           XXXX 0001
+     * Zero                                 XXXX 8000           XXXX 0000
+     * Zero minus 1 LSB                     XXXX 7FFF           XXXX FFFF
+     * Negative Full Scale plus 1 LSB       XXXX 0001           XXXX 8001
+     * Negative Full Scale                  XXXX 0000           XXXX 8000
      */
     private void TwosComplement()
     {
