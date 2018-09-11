@@ -21,7 +21,7 @@ import java.util.ArrayDeque;
  * 1) construct a GS Sequencer
  * 2) construct a GS Buffer
  * 3) write function to buffer using primarily "appendValue" and "appendEndofTP", "appendEndofFunction"
- * 4) 
+ * 4)
  */
 public class GSSequencer {
 
